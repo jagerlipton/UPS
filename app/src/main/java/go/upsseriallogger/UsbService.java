@@ -33,9 +33,8 @@ public class UsbService extends Service {
     public static final String ACTION_USB_DISCONNECTED = "com.felhr.usbservice.USB_DISCONNECTED";
     public static final String ACTION_CDC_DRIVER_NOT_WORKING = "com.felhr.connectivityservices.ACTION_CDC_DRIVER_NOT_WORKING";
     public static final String ACTION_USB_DEVICE_NOT_WORKING = "com.felhr.connectivityservices.ACTION_USB_DEVICE_NOT_WORKING";
+    public final static String BROADCAST_ACTION_DEVlIST = "ru.startandroid.develop.p0961servicebackbroadcast";
     public static final int MESSAGE_FROM_SERIAL_PORT = 0;
-    public static final int CTS_CHANGE = 1;
-    public static final int DSR_CHANGE = 2;
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
     private static final int BAUD_RATE = 115200; // BaudRate. Change this value if you need
     public static boolean SERVICE_CONNECTED = false;
@@ -107,7 +106,8 @@ public class UsbService extends Service {
         UsbService.SERVICE_CONNECTED = true;
         setFilter();
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        findSerialPortDevice();
+       // findSerialPortDevice();
+        comportlist();
     }
 
     /* MUST READ about services
@@ -152,13 +152,11 @@ public class UsbService extends Service {
                 int deviceVID = device.getVendorId();
                 int devicePID = device.getProductId();
 
-                Intent intent = new Intent(MainActivity.BROADCAST_ACTION_DEVlIST);
-                intent.putExtra("device_vid", "ghgfhgfhf");
-                intent.putExtra("device_pid", devicePID);
-                             sendBroadcast(intent);
+
 
 
                 if (deviceVID != 0x1d6b && (devicePID != 0x0001 && devicePID != 0x0002 && devicePID != 0x0003)) {
+
 
 
                     // There is a device connected to our Android device. Try to open it as a Serial Port.
@@ -184,6 +182,42 @@ public class UsbService extends Service {
         }
     }
 
+
+    private void comportlist() {
+           HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
+        if(!usbDevices.isEmpty())
+        {
+            boolean keep = true;
+            for(Map.Entry<String, UsbDevice> entry : usbDevices.entrySet())
+            {
+                device = entry.getValue();
+                int deviceVID = device.getVendorId();
+                int devicePID = device.getProductId();
+                Intent intent = new Intent(BROADCAST_ACTION_DEVlIST);
+                intent.putExtra("device_vid",deviceVID );
+                intent.putExtra("device_pid", devicePID);
+                sendBroadcast(intent);
+
+                if(deviceVID != 0x1d6b || (devicePID != 0x0001 || devicePID != 0x0002 || devicePID != 0x0003))
+                {
+                    // We are supposing here there is only one device connected and it is our serial device
+                  //  connection = usbManager.openDevice(device);
+                  //  keep = false;
+                }else
+                {
+                    connection = null;
+                    device = null;
+                }
+
+                if(!keep)
+                    break;
+            }
+        }
+
+
+
+
+    }
     private void setFilter() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PERMISSION);
