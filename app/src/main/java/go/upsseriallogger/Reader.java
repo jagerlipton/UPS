@@ -12,16 +12,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class Reader extends AppCompatActivity {
-    final String LOG_TAG = "myLogs";
-    private static final int REQUEST_DIRECTORY = 0;
-    final ArrayList<String> logstrings = new ArrayList<String>();
-    private TextView status;
+    private final String LOG_TAG = "myLogs";
+    private  final ArrayList<String> logstrings = new ArrayList<>();
 
     //=============================================
     @Override
@@ -58,7 +55,7 @@ public class Reader extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    public void openFileDialog() {
+    private void openFileDialog() {
 
         FileChooser filechooser = new FileChooser(this);
         filechooser.setFileListener(new FileChooser.FileSelectedListener() {
@@ -72,7 +69,7 @@ public class Reader extends AppCompatActivity {
         filechooser.setExtension("txt");
         filechooser.showDialog();
     }
-    void readfile(String filename) {
+    private void readfile(String filename) {
 
         if (!Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
@@ -84,21 +81,19 @@ public class Reader extends AppCompatActivity {
         try {
 
             BufferedReader br = new BufferedReader(new FileReader(sdFile));
-            String str = "";
+            String str;
 
 
             ListView list = (ListView) findViewById(R.id.listview4);
-            ArrayAdapter<String> adapter = new    ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, logstrings);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, logstrings);
             list.setAdapter(adapter);
             logstrings.clear();
-            status = (TextView) findViewById(R.id.textView);
+            TextView status = (TextView) findViewById(R.id.textView);
             status.setText(filename);
             while ((str = br.readLine()) != null) {
                 logstrings.add(str);
                 adapter.notifyDataSetChanged();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

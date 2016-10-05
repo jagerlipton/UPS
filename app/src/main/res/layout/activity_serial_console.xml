@@ -6,43 +6,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="go.upsseriallogger.SerialConsoleActivity">
-   >
 
-
-    <LinearLayout
+       <LinearLayout style="?android:buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="65dp">
 
-        <Button
-            android:text="ESCH"
+          <Button style="?android:buttonBarButtonStyle"
+            android:text="@string/button_ESCH"
             android:layout_width="65dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCH"
             android:onClick="ESCH_click" />
 
-        <Button
-            android:text="ESCL"
+           <Button style="?android:buttonBarButtonStyle"
+            android:text="@string/button_ESCL"
             android:layout_width="65dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCL"
             android:onClick="ESCL_click" />
 
-        <Button
-            android:text="ESCB"
+           <Button style="?android:buttonBarButtonStyle"
+            android:text="@string/button_ESCB"
             android:layout_width="65dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCB"
             android:onClick="ESCB_click" />
 
-        <Button
-            android:text="ESCN"
+           <Button style="?android:buttonBarButtonStyle"
+            android:text="@string/button_ESCN"
             android:layout_width="65dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCN"
             android:onClick="ESCN_click" />
 
-        <Button
-            android:text="clear"
+           <Button style="?android:buttonBarButtonStyle"
+            android:text="@string/button_Clear"
             android:layout_width="65dp"
             android:layout_height="match_parent"
             android:id="@+id/clearlist"

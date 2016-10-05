@@ -19,8 +19,8 @@ public class FileChooser {
     private static final String PARENT_DIR = "..";
 
     private final Activity activity;
-    private ListView list;
-    private Dialog dialog;
+    private final ListView list;
+    private final Dialog dialog;
     private File currentPath;
     private String extension = null;
 
@@ -32,9 +32,8 @@ public class FileChooser {
     public interface FileSelectedListener {
         void fileSelected(File file);
     }
-    public FileChooser setFileListener(FileSelectedListener fileListener) {
+    public void setFileListener(FileSelectedListener fileListener) {
         this.fileListener = fileListener;
-        return this;
     }
     private FileSelectedListener fileListener;
 
@@ -57,7 +56,7 @@ public class FileChooser {
             }
         });
         dialog.setContentView(list);
-        dialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+        dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         refresh(Environment.getExternalStorageDirectory());
     }
 
@@ -76,17 +75,7 @@ public class FileChooser {
             });
             File[] files = path.listFiles(new FileFilter() {
                 @Override public boolean accept(File file) {
-                    if (!file.isDirectory()) {
-                        if (!file.canRead()) {
-                            return false;
-                        } else if (extension == null) {
-                            return true;
-                        } else {
-                            return file.getName().toLowerCase().endsWith(extension);
-                        }
-                    } else {
-                        return false;
-                    }
+                    return !file.isDirectory() && file.canRead() && (extension == null || file.getName().toLowerCase().endsWith(extension));
                 }
             });
 

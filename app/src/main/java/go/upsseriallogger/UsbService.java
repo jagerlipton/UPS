@@ -1,6 +1,6 @@
 package go.upsseriallogger;
 
-import android.app.PendingIntent;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,28 +10,19 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.ContactsContract;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
-
-import com.felhr.usbserial.CDCSerialDevice;
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
-
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class UsbService extends Service {
 
-    public static final String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
-    public static final String ACTION_USB_DETACHED = "android.hardware.usb.action.USB_DEVICE_DETACHED";
+    private final static String ACTION_USB_ATTACHED = "android.hardware.usb.action.USB_DEVICE_ATTACHED";
+    private final static String ACTION_USB_DETACHED = "android.hardware.usb.action.USB_DEVICE_DETACHED";
     public final static String BROADCAST_ACTION_DEVlIST = "go.action.upsserialcontroller_devlist_servicebackbroadcast";
     public final static String GET_ACTION_DEVlIST = "go.action.upsserialcontroller_get_action_servicebackbroadcast";
     public final static String STOPPORT_ACTION= "go.action.upsserialcontroller_stop.portservicebackbroadcast";
@@ -41,14 +32,14 @@ public class UsbService extends Service {
     public final static String ESCH_ACTION= "go.action.upsserialcontroller_ESCH_portservicebackbroadcast";
     public final static String ESCB_ACTION= "go.action.upsserialcontroller_ESCB_portservicebackbroadcast";
     public final static String ESCN_ACTION= "go.action.upsserialcontroller_ESCN_portservicebackbroadcast";
-    public static final int MESSAGE_FROM_SERIAL_PORT = 0;
+   // public static final int MESSAGE_FROM_SERIAL_PORT = 0;
     public static boolean SERVICE_CONNECTED = false;
-    static final String HEX_L = "4C";
-    static final String HEX_ESC = "1B";
-    static final String HEX_H = "48";
-    static final String HEX_B = "42";
-    static final String HEX_N = "4E";
-    private IBinder binder = new UsbBinder();
+    private static final String HEX_L = "4C";
+    private static final String HEX_ESC = "1B";
+    private static final String HEX_H = "48";
+    private static final String HEX_B = "42";
+    private static final String HEX_N = "4E";
+    private final IBinder binder = new UsbBinder();
 
     private Context context;
     private Handler mHandler;
@@ -57,12 +48,12 @@ public class UsbService extends Service {
     private UsbDeviceConnection connection;
     private UsbSerialDevice serialPort;
 
-    public boolean serialPortConnected;
+    private  boolean serialPortConnected;
     private String fullstring="";
-    final ArrayList<String> logstrings = new ArrayList<String>();
+    private final ArrayList<String> logstrings = new ArrayList<>();
 
     //====================
-    private UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
+    private final UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
         @Override
         public void onReceivedData(byte[] arg0) {
             try {
@@ -84,7 +75,7 @@ public class UsbService extends Service {
         }
     };
 
-    public static byte[] hexStringToByteArray(String s) {
+    private static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len/2];
 
@@ -94,7 +85,7 @@ public class UsbService extends Service {
         return data;
     }
 
- void hexwrite(String str){
+    private void hexwrite(String str){
      write(hexStringToByteArray(str));
  }
 
@@ -188,7 +179,7 @@ public class UsbService extends Service {
     }
 
 
-    public void write(byte[] data) {
+    private void write(byte[] data) {
         if (serialPort != null)
             serialPort.write(data);
     }

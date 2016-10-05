@@ -10,9 +10,7 @@ import android.util.Log;
 
 public class Settings extends PreferenceActivity {
 
-    final String LOG_TAG = "myLogs";
-
-    @Override
+      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
@@ -36,9 +34,9 @@ public class Settings extends PreferenceActivity {
     }
 
 
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
 
-        private String TAG = Settings.class.getSimpleName();
+        private final String TAG = Settings.class.getSimpleName();
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {

@@ -20,28 +20,28 @@ import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class SerialConsoleActivity extends AppCompatActivity {
 
-    final ArrayList<String> logstrings = new ArrayList<String>();
-    static final SimpleDateFormat DATA_FORMAT = new SimpleDateFormat("dd_MM_yyyy");
-    static final String LOG_EXTENTION = ".txt";
-    final String LOG_TAG = "myLogs";
+    private final ArrayList<String> logstrings = new ArrayList<>();
+    private static final SimpleDateFormat DATA_FORMAT = new SimpleDateFormat("dd_MM_yyyy", Locale.ROOT);
+    private static final String LOG_EXTENTION = ".txt";
+    private final String LOG_TAG = "myLogs";
     private static final int REQUEST_DIRECTORY = 0;
 
 
    //==========
-   void lines_add(String str){
+   private void lines_add(String str){
 
        ListView list = (ListView) findViewById(R.id.listview3);
-       ArrayAdapter<String> adapter = new ArrayAdapter<String>(SerialConsoleActivity.this, android.R.layout.simple_list_item_1, logstrings);
+       ArrayAdapter<String> adapter = new ArrayAdapter<>(SerialConsoleActivity.this, android.R.layout.simple_list_item_1, logstrings);
        list.setAdapter(adapter);
        logstrings.add(str);
        adapter.notifyDataSetChanged();
@@ -101,7 +101,7 @@ public class SerialConsoleActivity extends AppCompatActivity {
         return true;
     }
 
-    public void Start_chooser_dialog(String extra)
+    private void Start_chooser_dialog(String extra)
     {
         final Intent chooserIntent = new Intent(
                SerialConsoleActivity.this,
@@ -140,7 +140,7 @@ public class SerialConsoleActivity extends AppCompatActivity {
         }
     }
 //=======================================================================
-    public void openFileDialog() {
+private void openFileDialog() {
 
         FileChooser filechooser = new FileChooser(this);
         filechooser.setFileListener(new FileChooser.FileSelectedListener() {
@@ -166,14 +166,14 @@ public class SerialConsoleActivity extends AppCompatActivity {
         if (requestCode == REQUEST_DIRECTORY) {
             Log.i(LOG_TAG, String.format("Return from DirChooser with result %d",  resultCode));
                  if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-                if (Global_data.Gd_Intent_data == "settings_directory_path") {
+                if (Global_data.Gd_Intent_data.equals("settings_directory_path")) {
                     Global_data.Gd_Directory_path=data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("pref_directory_path",data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
-                    editor.commit();
+                    editor.apply();
                 }
-                if (Global_data.Gd_Intent_data == "saveas") {
+                if (Global_data.Gd_Intent_data.equals("saveas")) {
                     WriteFile_from_listview(data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
                 }
             }
@@ -182,7 +182,7 @@ public class SerialConsoleActivity extends AppCompatActivity {
     //========================
 
     //==========================================
-    void WriteFile_from_listview(String filepath) {
+    private  void WriteFile_from_listview(String filepath) {
         if (!Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
             Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
@@ -202,7 +202,7 @@ public class SerialConsoleActivity extends AppCompatActivity {
 
             BufferedWriter bw = new BufferedWriter(new FileWriter(sdFile));
               ListView list = (ListView) findViewById(R.id.listview3);
-            ArrayAdapter<String> adapter = new    ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, logstrings);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, logstrings);
                 list.setAdapter(adapter);
             Integer list_lines_count=adapter.getCount();
 
@@ -221,7 +221,7 @@ public class SerialConsoleActivity extends AppCompatActivity {
 
     //========================================================================
 
-    void readfile(String filename) {
+    private void readfile(String filename) {
 
         if (!Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
@@ -233,19 +233,17 @@ public class SerialConsoleActivity extends AppCompatActivity {
         try {
 
             BufferedReader br = new BufferedReader(new FileReader(sdFile));
-            String str = "";
+            String str;
 
 
               ListView list = (ListView) findViewById(R.id.listview3);
-            ArrayAdapter<String> adapter = new    ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, logstrings);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, logstrings);
               list.setAdapter(adapter);
             logstrings.clear();
             while ((str = br.readLine()) != null) {
                 logstrings.add(str);
                 adapter.notifyDataSetChanged();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -256,34 +254,34 @@ public class SerialConsoleActivity extends AppCompatActivity {
 
 
 //=========обработчики кнопок==================
-    public void ESCL_click (View v) {
+    public void ESCL_click () {
 
         Intent intent = new Intent(UsbService.ESCL_ACTION);
         sendBroadcast(intent);
     }
 
-    public void ESCH_click (View v) {
+    public void ESCH_click () {
 
         Intent intent = new Intent(UsbService.ESCH_ACTION);
         sendBroadcast(intent);
     }
 
-    public void ESCB_click (View v) {
+    public void ESCB_click () {
 
         Intent intent = new Intent(UsbService.ESCB_ACTION);
         sendBroadcast(intent);
     }
 
-    public void ESCN_click (View v) {
+    public void ESCN_click () {
 
         Intent intent = new Intent(UsbService.ESCN_ACTION);
         sendBroadcast(intent);
     }
 
-    public void clearlist_click (View v) {
+    public void clearlist_click () {
         logstrings.clear();
         ListView list = (ListView) findViewById(R.id.listview3);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(SerialConsoleActivity.this, android.R.layout.simple_list_item_1, logstrings);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(SerialConsoleActivity.this, android.R.layout.simple_list_item_1, logstrings);
         list.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 

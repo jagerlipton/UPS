@@ -28,11 +28,8 @@ import android.os.IBinder;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String LOG_TAG = "myLogs";
-    final ArrayList<String> logstrings = new ArrayList<String>();
-    private ListView mListView;
-
-
+    private final String LOG_TAG = "myLogs";
+    private final ArrayList<String> logstrings = new ArrayList<>();
 
 
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
@@ -46,21 +43,24 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void devlist_recieve(Intent intent) { // проверено. получает список из сервиса
+    private void devlist_recieve(Intent intent) { // проверено. получает список из сервиса
         if (intent.getExtras().getBoolean("clearlist")) {
             logstrings.clear();
 
             ListView list = (ListView) findViewById(R.id.deviceList);
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, logstrings);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, logstrings);
             list.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         } else {
             logstrings.clear();
+
             ArrayList<String> logstrings = intent.getExtras().getStringArrayList("arraylist");
-            ListView list = (ListView) findViewById(R.id.deviceList);
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, logstrings);
-            list.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+           if (logstrings != null ){
+               ListView list = (ListView) findViewById(R.id.deviceList);
+               ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, logstrings);
+               list.setAdapter(adapter);
+               adapter.notifyDataSetChanged();
+           }
         }
     }
 
@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
   private static class MyHandler extends Handler {
    private final WeakReference<MainActivity> mActivity;
 
-       public MyHandler(MainActivity activity) {
-          mActivity = new WeakReference<>(activity);
-       }
+     public MyHandler(MainActivity activity) {
+        mActivity = new WeakReference<>(activity);
+      }
 
       /*  @Override
         public void handleMessage(Message msg) {
@@ -102,16 +102,9 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    private void startService(Class<?> service, ServiceConnection serviceConnection, Bundle extras) {
+    private void startService(Class<?> service, ServiceConnection serviceConnection) {
         if (!UsbService.SERVICE_CONNECTED) {
             Intent startService = new Intent(this, service);
-            if (extras != null && !extras.isEmpty()) {
-                Set<String> keys = extras.keySet();
-                for (String key : keys) {
-                    String extra = extras.getString(key);
-                    startService.putExtra(key, extra);
-                }
-            }
             startService(startService);
         }
         Intent bindingIntent = new Intent(this, service);
@@ -134,8 +127,8 @@ private void setFilters() {
         mHandler = new MyHandler(this);
 
 
-        mListView = (ListView) findViewById(R.id.deviceList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, logstrings);
+        ListView mListView = (ListView) findViewById(R.id.deviceList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, logstrings);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -151,7 +144,7 @@ private void setFilters() {
         super.onResume();
         Read_Comport_settings();
         setFilters();
-        startService(UsbService.class, usbConnection, null);
+        startService(UsbService.class, usbConnection);
         readdevicelist();
     }
 
@@ -194,7 +187,7 @@ private void setFilters() {
         }
     }
 //=======================================================
-    public void openFileDialog() {
+private void openFileDialog() {
 
         FileChooser filechooser = new FileChooser(this);
         filechooser.setFileListener(new FileChooser.FileSelectedListener() {
@@ -213,7 +206,7 @@ private void setFilters() {
 
 
 
-    public void Read_Comport_settings(){
+    private void Read_Comport_settings(){
         String downloadType;
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         downloadType = SP.getString("comport_bauderate","9600");
@@ -285,14 +278,14 @@ private void setFilters() {
 
     //========================================================================
 
-    void readdevicelist() {
+    private  void readdevicelist() {
 
         Intent intent = new Intent(UsbService.GET_ACTION_DEVlIST);
               sendBroadcast(intent);
     }
     //=====================================================================
 
-    void showConsoleActivity(Integer position) {
+    private void showConsoleActivity(Integer position) {
 
         Intent intent = new Intent(MainActivity.this, SerialConsoleActivity.class);
         intent.putExtra("position",position);
