@@ -1,17 +1,12 @@
 package go.upsseriallogger;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.hardware.usb.UsbDeviceConnection;
-import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,16 +14,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,21 +24,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SerialConsoleActivity extends AppCompatActivity {
 
-    private final String TAG = SerialConsoleActivity.class.getSimpleName();
     final ArrayList<String> logstrings = new ArrayList<String>();
     static final SimpleDateFormat DATA_FORMAT = new SimpleDateFormat("dd_MM_yyyy");
     static final String LOG_EXTENTION = ".txt";
     final String LOG_TAG = "myLogs";
-
     private static final int REQUEST_DIRECTORY = 0;
 
 
@@ -62,10 +45,9 @@ public class SerialConsoleActivity extends AppCompatActivity {
        list.setAdapter(adapter);
        logstrings.add(str);
        adapter.notifyDataSetChanged();
-
    }
 
-    //===============
+
  //=============
 
  private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
@@ -87,7 +69,6 @@ public class SerialConsoleActivity extends AppCompatActivity {
     }
 
 
-
 //=====================================
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,7 +80,6 @@ public class SerialConsoleActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
        setFilters();
-
     }
 
 
@@ -184,7 +164,7 @@ public class SerialConsoleActivity extends AppCompatActivity {
         }
 
         if (requestCode == REQUEST_DIRECTORY) {
-            Log.i(TAG, String.format("Return from DirChooser with result %d",  resultCode));
+            Log.i(LOG_TAG, String.format("Return from DirChooser with result %d",  resultCode));
                  if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
                 if (Global_data.Gd_Intent_data == "settings_directory_path") {
                     Global_data.Gd_Directory_path=data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR);
@@ -264,8 +244,6 @@ public class SerialConsoleActivity extends AppCompatActivity {
                 logstrings.add(str);
                 adapter.notifyDataSetChanged();
             }
-
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -277,7 +255,7 @@ public class SerialConsoleActivity extends AppCompatActivity {
 
 
 
-
+//=========обработчики кнопок==================
     public void ESCL_click (View v) {
 
         Intent intent = new Intent(UsbService.ESCL_ACTION);
@@ -310,9 +288,5 @@ public class SerialConsoleActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
     }
-
-//=========функции работы с ком порт
-
-
     //===================
 }

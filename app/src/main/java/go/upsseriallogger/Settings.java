@@ -8,23 +8,20 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-
-
 public class Settings extends PreferenceActivity {
+
     final String LOG_TAG = "myLogs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
-
     }
 
 
     public static class MyPreferenceFragment extends PreferenceFragment
 
     {
-
         @Override
         public void onCreate(final Bundle savedInstanceState)
         {
@@ -35,9 +32,7 @@ public class Settings extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("comport_chet"));
             bindPreferenceSummaryToValue(findPreference("comport_stopbits"));
             bindPreferenceSummaryToValue(findPreference("comport_flowcontrol"));
-
         }
-
     }
 
 
@@ -50,10 +45,8 @@ public class Settings extends PreferenceActivity {
             String stringValue = value.toString();
 
             if (preference instanceof ListPreference) {
-
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
-
                 preference.setSummary(
                         index >= 0
                                 ? listPreference.getEntries()[index]
@@ -69,9 +62,7 @@ public class Settings extends PreferenceActivity {
 
 
     private static void bindPreferenceSummaryToValue(Preference preference) {
-
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
@@ -80,6 +71,5 @@ public class Settings extends PreferenceActivity {
 //==========
 
 
-    //========================
 }
 

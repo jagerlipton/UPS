@@ -10,10 +10,6 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import net.rdrei.android.dirchooser.DirectoryChooserActivity;
-import net.rdrei.android.dirchooser.DirectoryChooserConfig;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,11 +23,21 @@ public class Reader extends AppCompatActivity {
     final ArrayList<String> logstrings = new ArrayList<String>();
     private TextView status;
 
+    //=============================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reader);
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        String filename = intent.getStringExtra("filename");
+        readfile(filename);
+    }
+
+   //=============================================
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,26 +97,12 @@ public class Reader extends AppCompatActivity {
                 logstrings.add(str);
                 adapter.notifyDataSetChanged();
             }
-
-
-
-
-
-
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Intent intent = getIntent();
-        String filename = intent.getStringExtra("filename");
-        readfile(filename);
 
-    }
 
 }

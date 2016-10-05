@@ -6,44 +6,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.os.Bundle;
-
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Set;
-
 import android.util.Log;
-import android.widget.Toast;
-
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
 
 public class MainActivity extends AppCompatActivity {
-       final String LOG_TAG = "myLogs";
 
+    final String LOG_TAG = "myLogs";
     final ArrayList<String> logstrings = new ArrayList<String>();
-    private final String TAG = MainActivity.class.getSimpleName();
-
-    private UsbManager mUsbManager;
     private ListView mListView;
 
 
@@ -84,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
 
   private static class MyHandler extends Handler {
-       private final WeakReference<MainActivity> mActivity;
+   private final WeakReference<MainActivity> mActivity;
 
        public MyHandler(MainActivity activity) {
           mActivity = new WeakReference<>(activity);
@@ -315,8 +301,6 @@ private void setFilters() {
         Intent intent2 = new Intent(UsbService.STARTPORT_ACTION);
         intent2.putExtra("position",position);
         sendBroadcast(intent2);
-
-        Toast.makeText(this, "position="+ Integer.toString(position), Toast.LENGTH_SHORT).show();
 
     }
 

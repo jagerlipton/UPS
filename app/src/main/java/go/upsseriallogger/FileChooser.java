@@ -19,19 +19,16 @@ public class FileChooser {
     private static final String PARENT_DIR = "..";
 
     private final Activity activity;
-
     private ListView list;
     private Dialog dialog;
     private File currentPath;
-
-    // filter on file extension
     private String extension = null;
+
     public void setExtension(String extension) {
         this.extension = (extension == null) ? null :
                 extension.toLowerCase();
     }
 
-    // file selection event handling
     public interface FileSelectedListener {
         void fileSelected(File file);
     }
@@ -69,9 +66,6 @@ public class FileChooser {
     }
 
 
-    /**
-     * Sort, filter and display the files for the given path.
-     */
     private void refresh(File path) {
         this.currentPath = path;
         if (path.exists()) {
@@ -96,7 +90,7 @@ public class FileChooser {
                 }
             });
 
-            // convert to an array
+
             int i = 0;
             String[] fileList;
             if (path.getParentFile() == null) {
@@ -110,7 +104,7 @@ public class FileChooser {
             for (File dir : dirs) { fileList[i++] = dir.getName(); }
             for (File file : files ) { fileList[i++] = file.getName(); }
 
-            // refresh the user interface
+
             dialog.setTitle(currentPath.getPath());
             list.setAdapter(new ArrayAdapter(activity,
                     android.R.layout.simple_list_item_1, fileList) {
@@ -124,9 +118,6 @@ public class FileChooser {
     }
 
 
-    /**
-     * Convert a relative filename into an actual File object.
-     */
     private File getChosenFile(String fileChosen) {
         if (fileChosen.equals(PARENT_DIR)) {
             return currentPath.getParentFile();
