@@ -45,7 +45,10 @@ public class UsbService extends Service {
     public final static String STOPPORT_ACTION= "ru.startandroid.develop.p0961stopportservicebackbroadcast";
     public final static String STARTPORT_ACTION= "ru.startandroid.develop.p0961startportservicebackbroadcast";
     public final static String ACTION_LOG_LIST= "ru.startandroid.develop.p0961loglistportservicebackbroadcast";
-
+    public final static String ESCL_ACTION= "ru.startandroid.develop.p0961_ESCL_portservicebackbroadcast";
+    public final static String ESCH_ACTION= "ru.startandroid.develop.p0961_ESCH_portservicebackbroadcast";
+    public final static String ESCB_ACTION= "ru.startandroid.develop.p0961_ESCB_portservicebackbroadcast";
+    public final static String ESCN_ACTION= "ru.startandroid.develop.p0961_ESCN_portservicebackbroadcast";
     public static final int MESSAGE_FROM_SERIAL_PORT = 0;
     private static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
 
@@ -62,7 +65,7 @@ public class UsbService extends Service {
     private UsbSerialDevice serialPort;
 
     public boolean serialPortConnected;
-
+    private String fullstring="";
     final ArrayList<String> logstrings = new ArrayList<String>();
 
     //====================
@@ -72,9 +75,13 @@ public class UsbService extends Service {
             try {
                 String data = new String(arg0, "UTF-8");
                 if (mHandler != null){
+                   if(!data.contains("\n"))fullstring=fullstring+data;
+                    else {
                     Intent intent = new Intent(ACTION_LOG_LIST);
-                    intent.putExtra("data",data);
+                    intent.putExtra("data",fullstring);
                     context.sendBroadcast(intent);
+                       fullstring="";
+                   }
                 }
                   //  mHandler.obtainMessage(MESSAGE_FROM_SERIAL_PORT, data).sendToTarget();
 
@@ -84,11 +91,41 @@ public class UsbService extends Service {
         }
     };
 
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len/2];
+
+        for(int i = 0; i < len; i+=2){
+            data[i/2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i+1), 16));
+        }
+
+        return data;
+    }
+
+ void hexwrite(String str){
+     write(hexStringToByteArray(str));
+ }
+
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context arg0, Intent arg1) {
             switch (arg1.getAction()) {
-
+                case ESCL_ACTION:
+                    hexwrite("1B");
+                    hexwrite("4C");
+                    break;
+                case ESCH_ACTION:
+                    hexwrite("1B");
+                    hexwrite("48");
+                    break;
+                case ESCB_ACTION:
+                    hexwrite("1B");
+                    hexwrite("42");
+                    break;
+                case ESCN_ACTION:
+                    hexwrite("1B");
+                    hexwrite("4E");
+                    break;
                 case GET_ACTION_DEVlIST:
                     comportlist();
                     break;
@@ -131,6 +168,10 @@ public class UsbService extends Service {
         filter.addAction(GET_ACTION_DEVlIST);
         filter.addAction(STOPPORT_ACTION);
         filter.addAction(STARTPORT_ACTION);
+        filter.addAction(ESCL_ACTION);
+        filter.addAction(ESCH_ACTION);
+        filter.addAction(ESCB_ACTION);
+        filter.addAction(ESCN_ACTION);
         registerReceiver(usbReceiver, filter);
     }
 
