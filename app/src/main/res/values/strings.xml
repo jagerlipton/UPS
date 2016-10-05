@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">UPS Serial logger</string>
+    <string name="open_back">Назад</string>
+    <string name="open_go">Го</string>
+    <string name="dir_path">Путь сохранения логов</string>
+    <string name="pref_comport">Настройки COM порта</string>
+    <string name="settings_directory_path">Настройки пути сохранения логов...</string>
+    <string name="settings_comport">Настройки COM порта...</string>
+    <string name="saveas">Сохранить лог как...</string>
+    <string name="save">Сохранить лог</string>
+    <string name="exit">Выйти из программы</string>
+    <string name="readfile">Открыть логфайл</string>
+    <string name="app_title">Терминал</string>
+    <string name="refreshing">Refreshing...</string>
+    <string name="textBtnRTS">RTS - Request To Send</string>
+    <string name="textBtnDTR">DTR - Data Terminal Ready</string>
+    <string name="title_activity_console">Console</string>
+</resources>

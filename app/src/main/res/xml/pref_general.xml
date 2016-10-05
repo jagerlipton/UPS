@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/pref_comport"
+        android:key="pref_comport_settings">
+
+        <ListPreference
+            android:key="comport_bauderate"
+            android:title="@string/pref_comport_bauderate"
+            android:defaultValue="9600"
+            android:entries="@array/pref_comport_b_titles"
+            android:entryValues="@array/pref_comport_b_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="9600"/>
+
+        <ListPreference
+            android:key="comport_databit"
+            android:title="@string/pref_comport_databit"
+            android:defaultValue="8"
+            android:entries="@array/pref_comport_databit_titles"
+            android:entryValues="@array/pref_comport_databit_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="8"/>
+
+        <ListPreference
+            android:key="comport_chet"
+            android:title="@string/pref_comport_chet"
+            android:defaultValue="Нет"
+            android:entries="@array/pref_comport_chet_titles"
+            android:entryValues="@array/pref_comport_chet_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="Нет"/>
+
+        <ListPreference
+            android:key="comport_stopbits"
+            android:title="@string/pref_comport_stopbits"
+            android:defaultValue="1"
+            android:entries="@array/pref_comport_stopbits_titles"
+            android:entryValues="@array/pref_comport_stopbits_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="1"/>
+
+        <ListPreference
+            android:key="comport_flowcontrol"
+            android:title="@string/pref_comport_flowcontrol"
+            android:defaultValue="Нет"
+            android:entries="@array/pref_comport_flowcontrol_titles"
+            android:entryValues="@array/pref_comport_flowcontrol_values"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="Нет"/>
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

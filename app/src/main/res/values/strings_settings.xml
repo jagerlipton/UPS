@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/tools">
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="pref_comport_bauderate">Скорость</string>
+
+    <string-array name="pref_comport_b_titles">
+        <item>115200</item>
+        <item>57600</item>
+        <item>38400</item>
+        <item>19200</item>
+        <item>9600</item>
+        <item>4800</item>
+        <item>2400</item>
+    </string-array>
+    <string-array name="pref_comport_b_values">
+        <item>115200</item>
+        <item>57600</item>
+        <item>38400</item>
+        <item>19200</item>
+        <item>9600</item>
+        <item>4800</item>
+        <item>2400</item>
+    </string-array>
+
+    <string name="pref_comport_databit">Биты данных</string>
+    <string-array name="pref_comport_databit_titles">
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+
+    </string-array>
+    <string-array name="pref_comport_databit_values">
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+    <string name="pref_comport_chet">Четность</string>
+    <string-array name="pref_comport_chet_titles">
+        <item>NONE</item>
+        <item>ODD</item>
+        <item>EVEN</item>
+        <item>MARK</item>
+        <item>SPACE</item>
+    </string-array>
+    <string-array name="pref_comport_chet_values">
+        <item>NONE</item>
+        <item>ODD</item>
+        <item>EVEN</item>
+        <item>MARK</item>
+        <item>SPACE</item>
+    </string-array>
+
+    <string name="pref_comport_stopbits">Стоповые биты</string>
+    <string-array name="pref_comport_stopbits_titles">
+        <item>1</item>
+        <item>1,5</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="pref_comport_stopbits_values">
+        <item>1</item>
+        <item>1,5</item>
+        <item>2</item>
+    </string-array>
+
+    <string name="pref_comport_flowcontrol">Управление потоком</string>
+    <string-array name="pref_comport_flowcontrol_titles">
+        <item>OFF</item>
+        <item>RTS_CTS</item>
+        <item>DSR_DTR</item>
+        <item>XON_XOFF</item>
+    </string-array>
+    <string-array name="pref_comport_flowcontrol_values">
+        <item>OFF</item>
+        <item>RTS_CTS</item>
+        <item>DSR_DTR</item>
+        <item>XON_XOFF</item>
+    </string-array>
+
+
+</resources>
