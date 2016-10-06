@@ -2,35 +2,36 @@ package go.upsseriallogger;
 
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Set;
-import android.util.Log;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
-import android.os.IBinder;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private final String LOG_TAG = "myLogs";
     private final ArrayList<String> logstrings = new ArrayList<>();
-
+    private final ArrayList<String> logstrings_sub = new ArrayList<>();
+    private final ArrayList<Item> data = new ArrayList<>();
 
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         @Override
@@ -53,14 +54,20 @@ public class MainActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         } else {
             logstrings.clear();
-
+            logstrings_sub.clear();
+            data.clear();
             ArrayList<String> logstrings = intent.getExtras().getStringArrayList("arraylist");
+            ArrayList<String> logstrings_sub = intent.getExtras().getStringArrayList("arraylist_sub");
+
            if (logstrings != null ){
-               ListView list = (ListView) findViewById(R.id.deviceList);
-               ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, logstrings);
-               list.setAdapter(adapter);
-               adapter.notifyDataSetChanged();
-           }
+               Integer list_lines_count=logstrings.size();
+               for (int  k = 0; k < list_lines_count; ++k) {
+                   assert logstrings_sub != null;
+                   data.add(new Item(logstrings.get(k),logstrings_sub.get(k)));
+               }
+                 ListView list = (ListView) findViewById(R.id.deviceList);
+               list.setAdapter(new MyAdapter(this,data));
+                     }
         }
     }
 

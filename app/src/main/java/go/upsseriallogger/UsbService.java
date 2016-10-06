@@ -12,8 +12,10 @@ import android.hardware.usb.UsbManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,10 +50,11 @@ public class UsbService extends Service {
     private UsbDeviceConnection connection;
     private UsbSerialDevice serialPort;
 
+
     private  boolean serialPortConnected;
     private String fullstring="";
     private final ArrayList<String> logstrings = new ArrayList<>();
-
+    private final ArrayList<String> logstrings_sub = new ArrayList<>();
     //====================
     private final UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
         @Override
@@ -145,6 +148,8 @@ public class UsbService extends Service {
         filter.addAction(ESCB_ACTION);
         filter.addAction(ESCN_ACTION);
         registerReceiver(usbReceiver, filter);
+
+
     }
 
     //=================================
@@ -193,15 +198,19 @@ public class UsbService extends Service {
         HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
                        logstrings.clear();
+                       logstrings_sub.clear();
             for (Map.Entry<String, UsbDevice> entry : usbDevices.entrySet()) {
                 device = entry.getValue();
                 int deviceVID = device.getVendorId();
                 int devicePID = device.getProductId();
-                logstrings.add("Device: " + Integer.toString(deviceVID) + "/" + Integer.toString(devicePID));
+                UsbSerialDevice.isSupported(device);
+                logstrings.add("Device: VID: "+ Integer.toString(deviceVID) + " / PID: " + Integer.toString(devicePID));
+                logstrings_sub.add(serialPort.adapter_name);
                   }
 
             Intent intent = new Intent(BROADCAST_ACTION_DEVlIST);
             intent.putStringArrayListExtra("arraylist", logstrings);
+            intent.putStringArrayListExtra("arraylist_sub", logstrings_sub);
             intent.putExtra("clearlist", false);
             sendBroadcast(intent);
         } else {

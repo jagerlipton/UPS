@@ -4,6 +4,7 @@ package go.upsseriallogger;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
@@ -11,11 +12,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
 
-public class FileChooser {
+class FileChooser {
     private static final String PARENT_DIR = "..";
 
     private final Activity activity;
@@ -56,6 +58,7 @@ public class FileChooser {
             }
         });
         dialog.setContentView(list);
+        assert  dialog.getWindow() != null;
         dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         refresh(Environment.getExternalStorageDirectory());
     }
@@ -94,15 +97,22 @@ public class FileChooser {
             for (File file : files ) { fileList[i++] = file.getName(); }
 
 
+
+
+
             dialog.setTitle(currentPath.getPath());
-            list.setAdapter(new ArrayAdapter(activity,
-                    android.R.layout.simple_list_item_1, fileList) {
-                @Override public View getView(int pos, View view, ViewGroup parent) {
-                    view = super.getView(pos, view, parent);
-                    ((TextView) view).setSingleLine(true);
-                    return view;
-                }
-            });
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, fileList)
+            {
+
+                @NonNull
+                @Override public View getView(int pos, View view, @NonNull ViewGroup parent) {
+                view = super.getView(pos, view, parent);
+                ((TextView) view).setSingleLine(true);
+                return view;
+            }
+            };
+             list.setAdapter(adapter);
+
         }
     }
 

@@ -13,35 +13,35 @@
 
           <Button style="?android:buttonBarButtonStyle"
             android:text="@string/button_ESCH"
-            android:layout_width="65dp"
+            android:layout_width="70dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCH"
             android:onClick="ESCH_click" />
 
            <Button style="?android:buttonBarButtonStyle"
             android:text="@string/button_ESCL"
-            android:layout_width="65dp"
+            android:layout_width="70dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCL"
             android:onClick="ESCL_click" />
 
            <Button style="?android:buttonBarButtonStyle"
             android:text="@string/button_ESCB"
-            android:layout_width="65dp"
+            android:layout_width="70dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCB"
             android:onClick="ESCB_click" />
 
            <Button style="?android:buttonBarButtonStyle"
             android:text="@string/button_ESCN"
-            android:layout_width="65dp"
+            android:layout_width="70dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCN"
             android:onClick="ESCN_click" />
 
            <Button style="?android:buttonBarButtonStyle"
             android:text="@string/button_Clear"
-            android:layout_width="65dp"
+            android:layout_width="70dp"
             android:layout_height="match_parent"
             android:id="@+id/clearlist"
             android:onClick="clearlist_click" />

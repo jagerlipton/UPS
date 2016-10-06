@@ -5,7 +5,7 @@ android {
     group = 'com.felhr.usbserial'
     version = '1.0.0'
 
-    compileSdkVersion 22
+    compileSdkVersion 24
     buildToolsVersion "24.0.2"
 
     compileOptions {
@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 24
     }
 
     //noinspection GroovyAssignabilityCheck

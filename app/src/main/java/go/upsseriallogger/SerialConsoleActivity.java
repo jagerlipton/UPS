@@ -15,8 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -254,37 +256,37 @@ private void openFileDialog() {
 
 
 //=========обработчики кнопок==================
-    public void ESCL_click () {
+    public void ESCL_click (View v) {
 
         Intent intent = new Intent(UsbService.ESCL_ACTION);
         sendBroadcast(intent);
     }
 
-    public void ESCH_click () {
+    public void ESCH_click (View v) {
 
         Intent intent = new Intent(UsbService.ESCH_ACTION);
         sendBroadcast(intent);
     }
 
-    public void ESCB_click () {
+    public void ESCB_click (View V) {
 
         Intent intent = new Intent(UsbService.ESCB_ACTION);
         sendBroadcast(intent);
     }
 
-    public void ESCN_click () {
+    public void ESCN_click (View V) {
 
         Intent intent = new Intent(UsbService.ESCN_ACTION);
         sendBroadcast(intent);
     }
 
-    public void clearlist_click () {
+    public void clearlist_click (View V) {
         logstrings.clear();
         ListView list = (ListView) findViewById(R.id.listview3);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(SerialConsoleActivity.this, android.R.layout.simple_list_item_1, logstrings);
         list.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
     }
+
     //===================
 }

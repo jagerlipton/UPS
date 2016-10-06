@@ -1,18 +1,18 @@
 package com.felhr.usbserial;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.felhr.deviceids.CH34xIds;
-import com.felhr.deviceids.CP210xIds;
-import com.felhr.deviceids.FTDISioIds;
-import com.felhr.deviceids.PL2303Ids;
-
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbRequest;
+
+import com.felhr.deviceids.CH34xIds;
+import com.felhr.deviceids.CP210xIds;
+import com.felhr.deviceids.FTDISioIds;
+import com.felhr.deviceids.PL2303Ids;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class UsbSerialDevice implements UsbSerialInterface
 {
@@ -29,6 +29,8 @@ public abstract class UsbSerialDevice implements UsbSerialInterface
     protected WorkerThread workerThread;
     protected WriteThread writeThread;
     protected ReadThread readThread;
+     public static String adapter_name;
+
 
     // Endpoints for synchronous read and write operations
     private UsbEndpoint inEndpoint;
@@ -88,15 +90,15 @@ public abstract class UsbSerialDevice implements UsbSerialInterface
         int pid = device.getProductId();
 
         if(FTDISioIds.isDeviceSupported(vid, pid))
-            return true;
+        {adapter_name="Future Technology Devices International"; return true;}
         else if(CP210xIds.isDeviceSupported(vid, pid))
-            return true;
+        {adapter_name="Silicon Labs CP210x"; return true;}
         else if(PL2303Ids.isDeviceSupported(vid, pid))
-            return true;
+        {adapter_name="Prolific Technology Inc. PL2303"; return true;}
         else if(CH34xIds.isDeviceSupported(vid, pid))
-            return true;
+        {adapter_name="WinChipHead CH 34x"; return true;}
         else if(isCdcDevice(device))
-            return true;
+        {adapter_name="Unknown"; return true;}
         else
             return false;
     }
