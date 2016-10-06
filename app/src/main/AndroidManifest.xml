@@ -28,17 +28,23 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-        <activity android:name=".Settings" />
-        <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
+        <activity android:name=".Settings"
+            android:theme="@android:style/Theme.Dialog"
+            />
+        <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity"
+            android:theme="@android:style/Theme.Dialog"
+            />
         <activity
             android:name=".SerialConsoleActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".Reader" />
 
-        <service
+         <service
             android:name=".UsbService"
             android:enabled="true">
         </service>
+
+
           </application>
 
 </manifest>

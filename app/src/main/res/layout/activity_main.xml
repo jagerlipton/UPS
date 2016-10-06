@@ -36,6 +36,9 @@
         android:id="@+id/deviceList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/separator" />
+        android:layout_below="@+id/separator"
+        android:layout_margin="10dp"
+        android:transcriptMode="alwaysScroll"
+        android:stackFromBottom="true"/>
 
 </RelativeLayout>

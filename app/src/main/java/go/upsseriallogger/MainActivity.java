@@ -209,7 +209,7 @@ private void openFileDialog() {
         });
         filechooser.setExtension("txt");
         filechooser.showDialog();
-    }
+        }
 
 
 

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
@@ -17,12 +18,13 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
 
-class FileChooser {
+public class FileChooser  extends AppCompatActivity {
     private static final String PARENT_DIR = "..";
 
     private final Activity activity;
     private final ListView list;
     private final Dialog dialog;
+
     private File currentPath;
     private String extension = null;
 
@@ -40,9 +42,11 @@ class FileChooser {
     private FileSelectedListener fileListener;
 
     public FileChooser(Activity activity) {
+          activity.setTheme(R.style.DialogTheme);
         this.activity = activity;
-        dialog = new Dialog(activity);
-        list = new ListView(activity);
+           dialog = new Dialog(activity);
+
+           list = new ListView(activity);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override public void onItemClick(AdapterView<?> parent, View view, int which, long id) {
                 String fileChosen = (String) list.getItemAtPosition(which);
@@ -57,7 +61,9 @@ class FileChooser {
                 }
             }
         });
+
         dialog.setContentView(list);
+
         assert  dialog.getWindow() != null;
         dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         refresh(Environment.getExternalStorageDirectory());
