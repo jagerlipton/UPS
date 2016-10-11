@@ -29,9 +29,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private final String LOG_TAG = "myLogs";
-    private final ArrayList<String> logstrings = new ArrayList<>();
-    private final ArrayList<String> logstrings_sub = new ArrayList<>();
-    private final ArrayList<Item> data = new ArrayList<>();
+    private  ArrayList<String> logstrings = new ArrayList<>();
+    private  ArrayList<String> logstrings_sub = new ArrayList<>();
+    private  ArrayList<Item> data = new ArrayList<>();
 
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         @Override
@@ -185,9 +185,8 @@ private void setFilters() {
                 this.finish();
                 return true;
                case R.id.action_readfile:
-               openFileDialog();
-
-                return true;
+             openFileDialog();
+               return true;
 
                    default:
                 return super.onOptionsItemSelected(item);

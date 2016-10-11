@@ -4,7 +4,6 @@
     package="go.upsseriallogger">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-feature android:name="android.hardware.usb.host" />
 
     <application
@@ -15,6 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:theme">
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,7 +32,7 @@
             android:theme="@android:style/Theme.Dialog"
             />
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity"
-            android:theme="@android:style/Theme.Dialog"
+            android:theme="@style/DialogTheme"
             />
         <activity
             android:name=".SerialConsoleActivity"

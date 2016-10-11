@@ -2,4 +2,11 @@
 <resources>
     <color name="colorPrimary">#1E6C76</color>
     <color name="colorPrimaryDark">#263436</color>
+
+    <color name="STATUS">#f1ecec</color>
+    <color name="NOTICE">#d9edef</color>
+    <color name="ALARM">#fca9a3</color>
+    <color name="CMD">#abcfa8</color>
+    <color name="EVENT">#f4f4d8</color>
+    <color name="reader_font_color">#212121</color>
 </resources>

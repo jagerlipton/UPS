@@ -13,8 +13,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
@@ -43,7 +43,8 @@ public class SerialConsoleActivity extends AppCompatActivity {
    private void lines_add(String str){
 
        ListView list = (ListView) findViewById(R.id.listview3);
-       ArrayAdapter<String> adapter = new ArrayAdapter<>(SerialConsoleActivity.this, android.R.layout.simple_list_item_1, logstrings);
+       //ArrayAdapter<String> adapter = new ArrayAdapter<>(SerialConsoleActivity.this, android.R.layout.simple_list_item_1, logstrings);
+       ReaderAdapter adapter = new ReaderAdapter(this,logstrings);
        list.setAdapter(adapter);
        logstrings.add(str);
        adapter.notifyDataSetChanged();
@@ -204,7 +205,8 @@ private void openFileDialog() {
 
             BufferedWriter bw = new BufferedWriter(new FileWriter(sdFile));
               ListView list = (ListView) findViewById(R.id.listview3);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, logstrings);
+            //ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, logstrings);
+            ReaderAdapter adapter = new ReaderAdapter(this,logstrings);
                 list.setAdapter(adapter);
             Integer list_lines_count=adapter.getCount();
 
@@ -215,6 +217,7 @@ private void openFileDialog() {
             }
             bw.close();
             Log.d(LOG_TAG, "Файл записан на SD: " + sdFile.getAbsolutePath());
+            Toast.makeText(this, "Файл "+fileName+"_"+(i)+LOG_EXTENTION+" успешно записан", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -239,7 +242,8 @@ private void openFileDialog() {
 
 
               ListView list = (ListView) findViewById(R.id.listview3);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, logstrings);
+            //ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, logstrings);
+            ReaderAdapter adapter = new ReaderAdapter(this,logstrings);
               list.setAdapter(adapter);
             logstrings.clear();
             while ((str = br.readLine()) != null) {
@@ -283,7 +287,8 @@ private void openFileDialog() {
     public void clearlist_click (View V) {
         logstrings.clear();
         ListView list = (ListView) findViewById(R.id.listview3);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(SerialConsoleActivity.this, android.R.layout.simple_list_item_1, logstrings);
+       // ArrayAdapter<String> adapter = new ArrayAdapter<>(SerialConsoleActivity.this, android.R.layout.simple_list_item_1, logstrings);
+        ReaderAdapter adapter = new ReaderAdapter(this,logstrings);
         list.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
