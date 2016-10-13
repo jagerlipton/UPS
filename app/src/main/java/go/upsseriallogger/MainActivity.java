@@ -1,6 +1,7 @@
 package go.upsseriallogger;
 
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,82 +19,123 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-
+//  Toast.makeText(context, "azazaza", Toast.LENGTH_SHORT).show();
 public class MainActivity extends AppCompatActivity {
 
     private final String LOG_TAG = "myLogs";
-    private  ArrayList<String> logstrings = new ArrayList<>();
-    private  ArrayList<String> logstrings_sub = new ArrayList<>();
-    private  ArrayList<Item> data = new ArrayList<>();
+    private  ArrayList<Item> devList = new ArrayList<>();
+    private  ArrayList<Item> devListUsb = new ArrayList<>();
+    private  ArrayList<Item> devListBT = new ArrayList<>();
+    private TextView mProgressBarTitle;
+    private ProgressBar mProgressBar;
+    private static final int MESSAGE_REFRESH = 101;
+    private static final long REFRESH_TIMEOUT_MILLIS = 5000;
+    private BluetoothAdapter BA;
+    private final static int REQUEST_ENABLE_BT = 1;
 
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
-                 case UsbService.BROADCAST_ACTION_DEVlIST:
-                 devlist_recieve(intent);
+                 case UsbService.SET_DEVLIST_USB:
+                 devlistUsb_recieve(intent);
+                    break;
+                case UsbService.CLEAR_DEVLIST_USB:
+                    devlistUsb_clear();
+                    break;
+                case UsbService.SET_DEVLIST_BT:
+                    devlistBT_recieve(intent);
+                    break;
+                case UsbService.CLEAR_DEVLIST_BT:
+                   // devlistUsb_clear();
+                    break;
+                case UsbService.END_DISCOVERY:
+                    hideProgressBar();
                     break;
             }
         }
     };
 
-    private void devlist_recieve(Intent intent) { // проверено. получает список из сервиса
-        if (intent.getExtras().getBoolean("clearlist")) {
-            logstrings.clear();
+    private void devlistBT_recieve(Intent intent) { // проверено. получает список из сервиса
+
+        devListBT.clear();
+        devList.clear();
+        Bundle bundle=new Bundle();
+        bundle= intent.getExtras();
+
+        if(bundle != null) {
+            devListBT = (ArrayList<Item>) bundle.getSerializable("btdevlist");
+
+            if (devListUsb.size()>0)
+                for (int k = 0; k < devListUsb.size(); ++k) devList.add(devListUsb.get(k));
+            if (devListBT.size()>0)
+                for (int k = 0; k < devListBT.size(); ++k) devList.add(devListBT.get(k));
 
             ListView list = (ListView) findViewById(R.id.deviceList);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, logstrings);
-            list.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-        } else {
-            logstrings.clear();
-            logstrings_sub.clear();
-            data.clear();
-            ArrayList<String> logstrings = intent.getExtras().getStringArrayList("arraylist");
-            ArrayList<String> logstrings_sub = intent.getExtras().getStringArrayList("arraylist_sub");
+            list.setAdapter(new MyAdapter(this, devList));
 
-           if (logstrings != null ){
-               Integer list_lines_count=logstrings.size();
-               for (int  k = 0; k < list_lines_count; ++k) {
-                   assert logstrings_sub != null;
-                   data.add(new Item(logstrings.get(k),logstrings_sub.get(k)));
-               }
-                 ListView list = (ListView) findViewById(R.id.deviceList);
-               list.setAdapter(new MyAdapter(this,data));
-                     }
         }
     }
 
+    private void devlistUsb_clear(){
+        devListUsb.clear();
+        devList.clear();
+
+        if (devListBT.size()>0)
+            for (int k = 0; k < devListBT.size(); ++k) devList.add(devListBT.get(k));
+
+        ListView list = (ListView) findViewById(R.id.deviceList);
+          MyAdapter adapter = new MyAdapter(this,devList);
+            list.setAdapter(adapter);
+              adapter.notifyDataSetChanged();
+    }
+
+    private void devlistUsb_recieve(Intent intent) { // проверено. получает список из сервиса
+
+            devListUsb.clear();
+            devList.clear();
+            Bundle bundle=new Bundle();
+            bundle= intent.getExtras();
+
+                 if(bundle != null) {
+                     devListUsb = (ArrayList<Item>) bundle.getSerializable("usbdevlist");
+
+                     if (devListUsb.size()>0)
+                     for (int k = 0; k < devListUsb.size(); ++k) devList.add(devListUsb.get(k));
+                     if (devListBT.size()>0)
+                         for (int k = 0; k < devListBT.size(); ++k) devList.add(devListBT.get(k));
+
+                     ListView list = (ListView) findViewById(R.id.deviceList);
+                     list.setAdapter(new MyAdapter(this, devList));
+                 }
+       }
+
 
     private UsbService usbService;
-    private MyHandler mHandler;
 
-
-  private static class MyHandler extends Handler {
-   private final WeakReference<MainActivity> mActivity;
-
-     public MyHandler(MainActivity activity) {
-        mActivity = new WeakReference<>(activity);
-      }
-
-      /*  @Override
+   private final Handler mHandler = new Handler();
+   /*     @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case UsbService.MESSAGE_FROM_SERIAL_PORT:
-                    String data = (String) msg.obj;
-                    mActivity.get().display.append(data);
+                case MESSAGE_REFRESH:
+                   //readdevicelistBT();
+                   // Toast.makeText(MainActivity.this, "azazaza", Toast.LENGTH_SHORT).show();
+                    mHandler.sendEmptyMessageDelayed(MESSAGE_REFRESH, REFRESH_TIMEOUT_MILLIS);
                     break;
-
+                default:
+                    super.handleMessage(msg);
+                    break;
             }
-        }*/
- }
+        }
+
+    };*/
 
     private final ServiceConnection usbConnection = new ServiceConnection() {
         @Override
@@ -122,7 +164,12 @@ public class MainActivity extends AppCompatActivity {
 //====================================================================
 private void setFilters() {
     IntentFilter filter = new IntentFilter();
-    filter.addAction(UsbService.BROADCAST_ACTION_DEVlIST);
+    filter.addAction(UsbService.SET_DEVLIST_USB);
+    filter.addAction(UsbService.CLEAR_DEVLIST_USB);
+    filter.addAction(UsbService.SET_DEVLIST_BT);
+    filter.addAction(UsbService.CLEAR_DEVLIST_BT);
+    filter.addAction(UsbService.END_DISCOVERY);
+
     registerReceiver(mUsbReceiver, filter);
 }
     //================================================
@@ -131,11 +178,13 @@ private void setFilters() {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mHandler = new MyHandler(this);
+      //  mHandler = new MyHandler(this);
 
 
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressBarTitle = (TextView) findViewById(R.id.progressBarTitle);
         ListView mListView = (ListView) findViewById(R.id.deviceList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, logstrings);
+        MyAdapter adapter = new MyAdapter (MainActivity.this, devList);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -152,7 +201,10 @@ private void setFilters() {
         Read_Comport_settings();
         setFilters();
         startService(UsbService.class, usbConnection);
-        readdevicelist();
+          readdevicelistUSB();
+        hideProgressBar();
+        BA = BluetoothAdapter.getDefaultAdapter();
+        mHandler.sendEmptyMessage(MESSAGE_REFRESH);
     }
 
 
@@ -161,6 +213,7 @@ private void setFilters() {
         super.onPause();
         unregisterReceiver(mUsbReceiver);
         unbindService(usbConnection);
+        mHandler.removeMessages(MESSAGE_REFRESH);
     }
 
 
@@ -186,6 +239,7 @@ private void setFilters() {
                 return true;
                case R.id.action_readfile:
              openFileDialog();
+
                return true;
 
                    default:
@@ -284,25 +338,75 @@ private void openFileDialog() {
 
     //========================================================================
 
-    private  void readdevicelist() {
+    private  void readdevicelistUSB() {
 
-        Intent intent = new Intent(UsbService.GET_ACTION_DEVlIST);
+        Intent intent = new Intent(UsbService.GET_ACTION_DEVlIST_USB);
               sendBroadcast(intent);
     }
+
+    private  void readdevicelistBT() {
+
+        Intent intent = new Intent(UsbService.GET_ACTION_DEVlIST_BT);
+        sendBroadcast(intent);
+    }
+
     //=====================================================================
 
     private void showConsoleActivity(Integer position) {
 
-        Intent intent = new Intent(MainActivity.this, SerialConsoleActivity.class);
-        intent.putExtra("position",position);
-        startActivity(intent);
+        Item item;
+        item=devList.get(position);
+        if (item.btconnection){
 
-        Intent intent2 = new Intent(UsbService.STARTPORT_ACTION);
-        intent2.putExtra("position",position);
-        sendBroadcast(intent2);
-
+        }
+        else {
+            Intent intent = new Intent(MainActivity.this, SerialConsoleActivity.class);
+            startActivity(intent);
+            Intent intent2 = new Intent(UsbService.STARTPORT_ACTION);
+            intent2.putExtra("position",item.absolute_index_fromSerialDevList);
+            sendBroadcast(intent2);
+        }
+    }
+//=============================================
+    private void showProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressBarTitle.setVisibility(View.VISIBLE);
+        mProgressBarTitle.setText(R.string.refreshing);
     }
 
+    private void hideProgressBar() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mProgressBarTitle.setVisibility(View.INVISIBLE);
+    }
+
+//======================процедуры блюпупа
+
+    public void btbutton_click (View V) {
+        if (BA.isEnabled()) {
+            showProgressBar();
+            readdevicelistBT();
+        }
+        else
+        {
+
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if(requestCode == REQUEST_ENABLE_BT){
+            if(resultCode == RESULT_OK){
+                showProgressBar();
+                readdevicelistBT();
+            }else{
+                //bluetooth was not successfully turned on
+            }
+        }
+    }
 
 }
 

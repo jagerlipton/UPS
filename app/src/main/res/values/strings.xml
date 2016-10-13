@@ -12,6 +12,6 @@
     <string name="button_ESCB">ESCB</string>
     <string name="button_ESCN">ESCN</string>
     <string name="button_Clear">Clear</string>
-    <string name="refreshing">Refreshing</string>
-
+    <string name="refreshing">Scanning</string>
+    <string name="button_BT">Find BT devices</string>
 </resources>

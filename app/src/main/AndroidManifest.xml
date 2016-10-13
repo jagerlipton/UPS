@@ -4,7 +4,11 @@
     package="go.upsseriallogger">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-feature android:name="android.hardware.usb.host" />
+    <uses-feature android:name="android.hardware.bluetooth" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
     <application
         android:allowBackup="true"
@@ -14,10 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:theme">
-
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -28,23 +33,24 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-        <activity android:name=".Settings"
-            android:theme="@android:style/Theme.Dialog"
-            />
-        <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity"
-            android:theme="@style/DialogTheme"
-            />
+        <activity
+            android:name=".Settings"
+            android:theme="@android:style/Theme.Dialog" />
+        <activity
+            android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity"
+            android:theme="@style/DialogTheme" />
         <activity
             android:name=".SerialConsoleActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".Reader" />
 
-         <service
+        <service
             android:name=".UsbService"
+            android:enabled="true"></service>
+        <service
+            android:name=".BluetoothService"
             android:enabled="true">
-        </service>
-
-
-          </application>
+                   </service>
+    </application>
 
 </manifest>
