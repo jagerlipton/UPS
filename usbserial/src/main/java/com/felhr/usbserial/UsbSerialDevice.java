@@ -21,7 +21,6 @@ public abstract class UsbSerialDevice implements UsbSerialInterface
     private static boolean mr1Version;
     protected final UsbDevice device;
     protected final UsbDeviceConnection connection;
-
     protected static final int USB_TIMEOUT = 5000;
 
     protected SerialBuffer serialBuffer;
@@ -90,7 +89,7 @@ public abstract class UsbSerialDevice implements UsbSerialInterface
         int pid = device.getProductId();
 
         if(FTDISioIds.isDeviceSupported(vid, pid))
-        {adapter_name="Future Technology Devices International"; return true;}
+        {adapter_name="Future Technology Devices International";  return true;}
         else if(CP210xIds.isDeviceSupported(vid, pid))
         {adapter_name="Silicon Labs CP210x"; return true;}
         else if(PL2303Ids.isDeviceSupported(vid, pid))
@@ -101,7 +100,9 @@ public abstract class UsbSerialDevice implements UsbSerialInterface
         {adapter_name="Unknown"; return true;}
         else
             return false;
+
     }
+
 
     // Common Usb Serial Operations (I/O Asynchronous)
     @Override

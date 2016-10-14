@@ -93,6 +93,8 @@ public class SerialConsoleActivity extends AppCompatActivity {
         Intent intent = new Intent(UsbService.STOPPORT_ACTION);
         sendBroadcast(intent);
       unregisterReceiver(mUsbReceiver);
+        Intent intent2 = new Intent(UsbService.STOPPORT_BT_ACTION);
+           sendBroadcast(intent2);
     }
 
 

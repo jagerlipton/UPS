@@ -50,7 +50,9 @@ public class MyAdapter extends BaseAdapter {
         ImageView imageView = (ImageView) someView.findViewById(R.id.img);
         TextView header = (TextView) someView.findViewById(R.id.item_headerText);
         TextView subHeader = (TextView) someView.findViewById(R.id.item_subHeaderText);
+        header.setTextColor(context.getResources().getColor(R.color.header_font_color));
         header.setText(data.get(i).header);
+        subHeader.setTextColor(context.getResources().getColor(R.color.sub_header_font_color));
         subHeader.setText(data.get(i).subheader);
        if (data.get(i).btconnection) imageView.setImageResource( R.drawable.bt);
        else imageView.setImageResource( R.drawable.usb);

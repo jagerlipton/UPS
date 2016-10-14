@@ -35,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private  ArrayList<Item> devListBT = new ArrayList<>();
     private TextView mProgressBarTitle;
     private ProgressBar mProgressBar;
-    private static final int MESSAGE_REFRESH = 101;
-    private static final long REFRESH_TIMEOUT_MILLIS = 5000;
     private BluetoothAdapter BA;
     private final static int REQUEST_ENABLE_BT = 1;
 
@@ -67,14 +65,15 @@ public class MainActivity extends AppCompatActivity {
 
         devListBT.clear();
         devList.clear();
-        Bundle bundle=new Bundle();
-        bundle= intent.getExtras();
+     //   Bundle bundle=new Bundle();
+        Bundle bundle= intent.getExtras();
 
         if(bundle != null) {
             devListBT = (ArrayList<Item>) bundle.getSerializable("btdevlist");
-
+            assert devListUsb != null;
             if (devListUsb.size()>0)
                 for (int k = 0; k < devListUsb.size(); ++k) devList.add(devListUsb.get(k));
+            assert devListBT != null;
             if (devListBT.size()>0)
                 for (int k = 0; k < devListBT.size(); ++k) devList.add(devListBT.get(k));
 
@@ -101,14 +100,16 @@ public class MainActivity extends AppCompatActivity {
 
             devListUsb.clear();
             devList.clear();
-            Bundle bundle=new Bundle();
-            bundle= intent.getExtras();
+          //  Bundle bundle=new Bundle();
+        Bundle bundle= intent.getExtras();
 
                  if(bundle != null) {
                      devListUsb = (ArrayList<Item>) bundle.getSerializable("usbdevlist");
 
+                     assert devListUsb != null;
                      if (devListUsb.size()>0)
                      for (int k = 0; k < devListUsb.size(); ++k) devList.add(devListUsb.get(k));
+                     assert devListBT != null;
                      if (devListBT.size()>0)
                          for (int k = 0; k < devListBT.size(); ++k) devList.add(devListBT.get(k));
 
@@ -204,7 +205,7 @@ private void setFilters() {
           readdevicelistUSB();
         hideProgressBar();
         BA = BluetoothAdapter.getDefaultAdapter();
-        mHandler.sendEmptyMessage(MESSAGE_REFRESH);
+
     }
 
 
@@ -213,7 +214,7 @@ private void setFilters() {
         super.onPause();
         unregisterReceiver(mUsbReceiver);
         unbindService(usbConnection);
-        mHandler.removeMessages(MESSAGE_REFRESH);
+
     }
 
 
@@ -357,7 +358,11 @@ private void openFileDialog() {
         Item item;
         item=devList.get(position);
         if (item.btconnection){
-
+            Intent intent = new Intent(MainActivity.this, SerialConsoleActivity.class);
+            startActivity(intent);
+            Intent intent2 = new Intent(UsbService.STARTPORT_BT_ACTION);
+            intent2.putExtra("mac",item.mac);
+            sendBroadcast(intent2);
         }
         else {
             Intent intent = new Intent(MainActivity.this, SerialConsoleActivity.class);
@@ -382,7 +387,10 @@ private void openFileDialog() {
 //======================процедуры блюпупа
 
     public void btbutton_click (View V) {
-        if (BA.isEnabled()) {
+        if (BA.isEnabled())
+        if (BA.isDiscovering())BA.cancelDiscovery();
+        else
+        {
             showProgressBar();
             readdevicelistBT();
         }

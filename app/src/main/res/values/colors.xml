@@ -9,4 +9,8 @@
     <color name="CMD">#abcfa8</color>
     <color name="EVENT">#f4f4d8</color>
     <color name="reader_font_color">#212121</color>
+    <color name="header_font_color">#212121</color>
+    <color name="sub_header_font_color">#585656</color>
+    <color name="corner">#ffbbbbbb</color>
+    <color name="bg_corner">#ffffff</color>
 </resources>

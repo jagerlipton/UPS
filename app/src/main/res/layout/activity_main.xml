@@ -39,7 +39,11 @@
         android:layout_below="@+id/separator"
         android:layout_margin="10dp"
         android:transcriptMode="alwaysScroll"
-        android:stackFromBottom="true"/>
+        android:stackFromBottom="true"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp"
+
+        />
 
     <Button style="?android:buttonBarButtonStyle"
         android:text="@string/button_BT"
