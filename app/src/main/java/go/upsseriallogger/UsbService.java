@@ -116,8 +116,12 @@ public class UsbService extends Service {
         return data;
     }
 
-    private void hexwrite(String str){
-     write(hexStringToByteArray(str));
+    private void hexwrite(String str)
+    {
+   if (BTConnected) mConnectedThread.write(hexStringToByteArray(str));
+
+   if (serialPortConnected) write(hexStringToByteArray(str));
+
  }
 
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
@@ -474,9 +478,8 @@ public class UsbService extends Service {
             }
         }
         BTConnected = false;
-
-
     }
+
 
 
 
@@ -534,15 +537,15 @@ public class ConnectedThread extends Thread {
         }
     }
 
-    public void write(String message) {
+    public void write(byte[] bytes){
+        try{
+            mmOutStream.write(bytes);
 
-        byte[] msgBuffer = message.getBytes();
-        try {
-            mmOutStream.write(msgBuffer);
-        } catch (IOException e) {
-            //
+        } catch(IOException e){
+
         }
     }
+
 
     /* Call this from the main activity to shutdown the connection */
     public void cancel() {

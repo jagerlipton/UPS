@@ -265,7 +265,7 @@ private void openFileDialog() {
     public void ESCL_click (View v) {
 
         Intent intent = new Intent(UsbService.ESCL_ACTION);
-        sendBroadcast(intent);
+          sendBroadcast(intent);
     }
 
     public void ESCH_click (View v) {

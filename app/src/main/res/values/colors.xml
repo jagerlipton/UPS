@@ -11,6 +11,7 @@
     <color name="reader_font_color">#212121</color>
     <color name="header_font_color">#212121</color>
     <color name="sub_header_font_color">#585656</color>
+    <color name="bg_corner_selected">#b7d6d6</color>
     <color name="corner">#ffbbbbbb</color>
     <color name="bg_corner">#ffffff</color>
 </resources>
