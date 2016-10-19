@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1E6C76</color>
+    <color name="colorPrimary">#cfe6ee</color>
     <color name="colorPrimaryDark">#263436</color>
 
     <color name="STATUS">#f1ecec</color>

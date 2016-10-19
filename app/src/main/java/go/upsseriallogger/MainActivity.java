@@ -14,14 +14,25 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.mikepenz.fastadapter.utils.RecyclerViewCacheUtil;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.ExpandableDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,10 +44,15 @@ public class MainActivity extends AppCompatActivity {
     private  ArrayList<Item> devList = new ArrayList<>();
     private  ArrayList<Item> devListUsb = new ArrayList<>();
     private  ArrayList<Item> devListBT = new ArrayList<>();
+
     private TextView mProgressBarTitle;
     private ProgressBar mProgressBar;
     private BluetoothAdapter BA;
     private final static int REQUEST_ENABLE_BT = 1;
+
+    private AccountHeader headerResult = null;
+    private Drawer result = null;
+    ExpandableDrawerItem item1 = new  ExpandableDrawerItem();
 
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         @Override
@@ -65,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
         devListBT.clear();
         devList.clear();
-     //   Bundle bundle=new Bundle();
         Bundle bundle= intent.getExtras();
 
         if(bundle != null) {
@@ -100,8 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
             devListUsb.clear();
             devList.clear();
-          //  Bundle bundle=new Bundle();
-        Bundle bundle= intent.getExtras();
+             Bundle bundle= intent.getExtras();
 
                  if(bundle != null) {
                      devListUsb = (ArrayList<Item>) bundle.getSerializable("usbdevlist");
@@ -160,8 +174,20 @@ public class MainActivity extends AppCompatActivity {
         Intent bindingIntent = new Intent(this, service);
         bindService(bindingIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
+//================================================================
+
+    private void writeserialportsettings(String baudrate, String databit, String parity, String stopbits, String floatcontrol){
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor = SP.edit();
+        editor.putString("comport_bauderate", baudrate);
+        editor.putString("comport_databit", databit);
+        editor.putString("comport_chet", parity);
+        editor.putString("comport_stopbits", stopbits);
+        editor.putString("comport_flowcontrol", floatcontrol);
+        editor.apply();
 
 
+    }
 //====================================================================
 private void setFilters() {
     IntentFilter filter = new IntentFilter();
@@ -179,7 +205,66 @@ private void setFilters() {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-      //  mHandler = new MyHandler(this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+              AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.drawable.header)
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .build();
+
+        item1 = new ExpandableDrawerItem().withName(R.string.drawer_item_serialportsettings).withIdentifier(2).withSelectable(false) ;
+
+         result = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withHasStableIds(true)
+                .withAccountHeader(headerResult)
+                .addDrawerItems(
+                        new DividerDrawerItem(),
+                        new  PrimaryDrawerItem().withName(R.string.drawer_item_openfile).withIdentifier(1).withSelectable(false),
+                        new DividerDrawerItem(),
+                        item1.withSubItems(
+                                new ExpandableDrawerItem().withName(R.string.drawer_item_eaton).withIdentifier(4).withSelectable(false).withSubItems(
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_eaton9130_pattern_header).withDescription(R.string.drawer_item_eaton9130_pattern_subheader).withLevel(2).withIdentifier(2000),
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_eaton9x90_pattern_header).withDescription(R.string.drawer_item_eaton9x90_pattern_subheader).withLevel(2).withIdentifier(2001)),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_customsettings).withLevel(2).withIdentifier(2002).withSelectable(false)),
+                                new DividerDrawerItem(),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_exit).withIdentifier(3).withSelectable(false)
+
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+
+                        if (drawerItem.getIdentifier() == 1) {
+                            openFileDialog();
+                        } else if (drawerItem.getIdentifier() == 2) {
+                         //
+                        } else if (drawerItem.getIdentifier() == 3) {
+                            MainActivity.this.finish();
+                        } else if (drawerItem.getIdentifier() == 2000) { //9130
+                            writeserialportsettings("9600", "8", "NONE", "1", "OFF"); Read_Comport_settings();
+                        } else if (drawerItem.getIdentifier() == 2001) {//9x90
+                            writeserialportsettings("19200", "8", "NONE", "1", "OFF");Read_Comport_settings();
+                        } else if (drawerItem.getIdentifier() == 2002) {
+                            Intent intent = new Intent(MainActivity.this, Settings.class);
+                            startActivity(intent);
+                        }
+
+                        return false;
+                    }
+                })
+                .build();
+
+
 
 
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -194,7 +279,7 @@ private void setFilters() {
 
         });
 
-
+        new RecyclerViewCacheUtil<IDrawerItem>().withCacheSize(2).apply(result.getRecyclerView(), result.getDrawerItems());
     }
     @Override
     protected void onResume() {
@@ -202,9 +287,10 @@ private void setFilters() {
         Read_Comport_settings();
         setFilters();
         startService(UsbService.class, usbConnection);
-          readdevicelistUSB();
+        readdevicelistUSB();
         hideProgressBar();
         BA = BluetoothAdapter.getDefaultAdapter();
+
 
     }
 
@@ -219,34 +305,7 @@ private void setFilters() {
 
 
 
-    //================ главное меню формы===========================
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.action_settings_comport:
-                Intent intent = new Intent(MainActivity.this, Settings.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_exit:
-                this.finish();
-                return true;
-               case R.id.action_readfile:
-             openFileDialog();
-
-               return true;
-
-                   default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 //=======================================================
 private void openFileDialog() {
 
@@ -264,7 +323,9 @@ private void openFileDialog() {
         filechooser.setExtension("txt");
         filechooser.showDialog();
         }
-
+    private String get_subheader_comport_string(){
+        return  Global_data.Gd_comport_baudrate+" "+Global_data.Gd_comport_databit+" "+Global_data.Gd_comport_chet+" "+Global_data.Gd_comport_stopbits+" "+Global_data.Gd_comport_flowcontrol;
+    }
 
 
     private void Read_Comport_settings(){
@@ -332,7 +393,8 @@ private void openFileDialog() {
 
         }
 
-
+        item1.withDescription(get_subheader_comport_string()).withSelectable(false);
+        if (result != null )result.updateItem(item1);
     }
 
 
@@ -387,7 +449,7 @@ private void openFileDialog() {
 //======================процедуры блюпупа
 
     public void btbutton_click (View V) {
-        if (BA.isEnabled())
+      if (BA.isEnabled())
         if (BA.isDiscovering())BA.cancelDiscovery();
         else
         {

@@ -31,6 +31,9 @@ dependencies {
     compile('net.rdrei.android.dirchooser:library:3.2@aar') {
         transitive = true;
     }
+    compile('com.mikepenz:materialdrawer:5.6.0@aar') {
+        transitive = true
+    }
     compile 'com.android.support:design:24.2.1'
     compile project(':usbserial')
 }

@@ -14,4 +14,16 @@
     <string name="button_Clear">Clear</string>
     <string name="refreshing">Scanning</string>
     <string name="button_BT">Find BT devices</string>
+
+
+    <string name="drawer_item_openfile">Open file log…</string>
+    <string name="drawer_item_serialportsettings">Serial Port settings</string>
+    <string name="drawer_item_eaton">Eaton</string>
+    <string name="drawer_item_eaton9130_pattern_header">Eaton 9130</string>
+    <string name="drawer_item_eaton9130_pattern_subheader">9600 8 NONE 1 OFF</string>
+    <string name="drawer_item_eaton9x90_pattern_header">Eaton 9x90</string>
+    <string name="drawer_item_eaton9x90_pattern_subheader">19200 8 NONE 1 OFF</string>
+
+    <string name="drawer_item_customsettings">Custom…</string>
+    <string name="drawer_item_exit">Exit</string>
 </resources>
