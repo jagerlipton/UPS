@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mikepenz.fastadapter.utils.RecyclerViewCacheUtil;
+import com.mikepenz.fontawesome_typeface_library.FontAwesome;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -220,24 +221,27 @@ private void setFilters() {
                 })
                 .build();
 
-        item1 = new ExpandableDrawerItem().withName(R.string.drawer_item_serialportsettings).withIdentifier(2).withSelectable(false) ;
-
-         result = new DrawerBuilder()
+        item1 = new ExpandableDrawerItem().withName(R.string.drawer_item_serialportsettings).withIdentifier(2).withSelectable(false).withIcon(FontAwesome.Icon.faw_plug);
+        result = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .withHasStableIds(true)
                 .withAccountHeader(headerResult)
+                 .withSelectedItem(-1)
+                 .withActionBarDrawerToggleAnimated(true)
                 .addDrawerItems(
                         new DividerDrawerItem(),
-                        new  PrimaryDrawerItem().withName(R.string.drawer_item_openfile).withIdentifier(1).withSelectable(false),
+                        new  PrimaryDrawerItem().withName(R.string.drawer_item_openfile).withIdentifier(1).withSelectable(false).withIcon(FontAwesome.Icon.faw_file_text),
                         new DividerDrawerItem(),
                         item1.withSubItems(
-                                new ExpandableDrawerItem().withName(R.string.drawer_item_eaton).withIdentifier(4).withSelectable(false).withSubItems(
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_eaton9130_pattern_header).withDescription(R.string.drawer_item_eaton9130_pattern_subheader).withLevel(2).withIdentifier(2000),
-                                new SecondaryDrawerItem().withName(R.string.drawer_item_eaton9x90_pattern_header).withDescription(R.string.drawer_item_eaton9x90_pattern_subheader).withLevel(2).withIdentifier(2001)),
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_customsettings).withLevel(2).withIdentifier(2002).withSelectable(false)),
+                                new ExpandableDrawerItem().withName(R.string.drawer_item_eaton).withIdentifier(4).withSelectable(false).withIcon(FontAwesome.Icon.faw_archive).withSubItems(
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_eaton9130_pattern_header).withDescription(R.string.drawer_item_eaton9130_pattern_subheader).withLevel(2).withIdentifier(2000).withIcon(FontAwesome.Icon.faw_archive),
+                                new SecondaryDrawerItem().withName(R.string.drawer_item_eaton9x90_pattern_header).withDescription(R.string.drawer_item_eaton9x90_pattern_subheader).withLevel(2).withIdentifier(2001).withIcon(FontAwesome.Icon.faw_archive)),
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_customsettings).withLevel(2).withIdentifier(2002).withSelectable(false).withIcon(FontAwesome.Icon.faw_cog)),
                                 new DividerDrawerItem(),
-                        new PrimaryDrawerItem().withName(R.string.drawer_item_exit).withIdentifier(3).withSelectable(false)
+                        new PrimaryDrawerItem().withName(R.string.drawer_item_exit).withIdentifier(3).withSelectable(false).withIcon(FontAwesome.Icon.faw_eject)
+
+
 
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
