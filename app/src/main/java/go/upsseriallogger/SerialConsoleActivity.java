@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -77,6 +78,9 @@ public class SerialConsoleActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_serial_console);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar1);
+        setSupportActionBar(toolbar);
+
           }
 
     @Override
@@ -292,6 +296,7 @@ private void openFileDialog() {
        // ArrayAdapter<String> adapter = new ArrayAdapter<>(SerialConsoleActivity.this, android.R.layout.simple_list_item_1, logstrings);
         ReaderAdapter adapter = new ReaderAdapter(this,logstrings);
         list.setAdapter(adapter);
+
         adapter.notifyDataSetChanged();
     }
 

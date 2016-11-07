@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private  ArrayList<Item> devList = new ArrayList<>();
     private  ArrayList<Item> devListUsb = new ArrayList<>();
     private  ArrayList<Item> devListBT = new ArrayList<>();
-
+    private  ArrayList<Item> devListWIFI = new ArrayList<>();
     private TextView mProgressBarTitle;
     private ProgressBar mProgressBar;
     private BluetoothAdapter BA;
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
     private AccountHeader headerResult = null;
     private Drawer result = null;
     ExpandableDrawerItem item1 = new  ExpandableDrawerItem();
+    PrimaryDrawerItem item2 = new PrimaryDrawerItem();
+    private static final int MESSAGE_REFRESH = 101;
+    private static final long REFRESH_TIMEOUT_MILLIS = 5000;
 
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         @Override
@@ -74,9 +78,36 @@ public class MainActivity extends AppCompatActivity {
                 case UsbService.END_DISCOVERY:
                     hideProgressBar();
                     break;
+                case UsbService.SET_DEVLIST_WIFI:
+                    devlistWIFI_recieve(intent);
+                    break;
             }
         }
     };
+
+    private void devlistWIFI_recieve(Intent intent) { // проверено. получает список из сервиса
+
+        devListWIFI.clear();
+        devList.clear();
+        Bundle bundle= intent.getExtras();
+
+        if(bundle != null) {
+            devListWIFI = (ArrayList<Item>) bundle.getSerializable("wifidevlist");
+            assert devListUsb != null;
+            if (devListUsb.size()>0)
+                for (int k = 0; k < devListUsb.size(); ++k) devList.add(devListUsb.get(k));
+            assert devListBT != null;
+            if (devListBT.size()>0)
+                for (int k = 0; k < devListBT.size(); ++k) devList.add(devListBT.get(k));
+            assert devListWIFI != null;
+            if (devListWIFI.size()>0)
+                for (int k = 0; k < devListWIFI.size(); ++k) devList.add(devListWIFI.get(k));
+
+            ListView list = (ListView) findViewById(R.id.deviceList);
+            list.setAdapter(new MyAdapter(this, devList));
+          //  Toast.makeText(MainActivity.this,  Integer.toString(devListWIFI.size()), Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void devlistBT_recieve(Intent intent) { // проверено. получает список из сервиса
 
@@ -92,7 +123,9 @@ public class MainActivity extends AppCompatActivity {
             assert devListBT != null;
             if (devListBT.size()>0)
                 for (int k = 0; k < devListBT.size(); ++k) devList.add(devListBT.get(k));
-
+            assert devListWIFI != null;
+            if (devListWIFI.size()>0)
+                for (int k = 0; k < devListWIFI.size(); ++k) devList.add(devListWIFI.get(k));
             ListView list = (ListView) findViewById(R.id.deviceList);
             list.setAdapter(new MyAdapter(this, devList));
 
@@ -127,6 +160,9 @@ public class MainActivity extends AppCompatActivity {
                      assert devListBT != null;
                      if (devListBT.size()>0)
                          for (int k = 0; k < devListBT.size(); ++k) devList.add(devListBT.get(k));
+                     assert devListWIFI != null;
+                     if (devListWIFI.size()>0)
+                         for (int k = 0; k < devListWIFI.size(); ++k) devList.add(devListWIFI.get(k));
 
                      ListView list = (ListView) findViewById(R.id.deviceList);
                      list.setAdapter(new MyAdapter(this, devList));
@@ -136,13 +172,13 @@ public class MainActivity extends AppCompatActivity {
 
     private UsbService usbService;
 
-   private final Handler mHandler = new Handler();
-   /*     @Override
+    private final Handler mHandler = new Handler() {
+        @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MESSAGE_REFRESH:
-                   //readdevicelistBT();
-                   // Toast.makeText(MainActivity.this, "azazaza", Toast.LENGTH_SHORT).show();
+                //    ping();
+                  //  Toast.makeText(MainActivity.this, "azazaza", Toast.LENGTH_SHORT).show();
                     mHandler.sendEmptyMessageDelayed(MESSAGE_REFRESH, REFRESH_TIMEOUT_MILLIS);
                     break;
                 default:
@@ -151,7 +187,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-    };*/
+    };
+
 
     private final ServiceConnection usbConnection = new ServiceConnection() {
         @Override
@@ -197,7 +234,7 @@ private void setFilters() {
     filter.addAction(UsbService.SET_DEVLIST_BT);
     filter.addAction(UsbService.CLEAR_DEVLIST_BT);
     filter.addAction(UsbService.END_DISCOVERY);
-
+    filter.addAction(UsbService.SET_DEVLIST_WIFI);
     registerReceiver(mUsbReceiver, filter);
 }
     //================================================
@@ -222,6 +259,7 @@ private void setFilters() {
                 .build();
 
         item1 = new ExpandableDrawerItem().withName(R.string.drawer_item_serialportsettings).withIdentifier(2).withSelectable(false).withIcon(FontAwesome.Icon.faw_plug);
+        item2 =  new PrimaryDrawerItem().withName(R.string.drawer_item_ipadress).withIdentifier(5).withSelectable(false).withIcon(FontAwesome.Icon.faw_wifi);
         result = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
@@ -238,6 +276,7 @@ private void setFilters() {
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_eaton9130_pattern_header).withDescription(R.string.drawer_item_eaton9130_pattern_subheader).withLevel(2).withIdentifier(2000).withIcon(FontAwesome.Icon.faw_archive),
                                 new SecondaryDrawerItem().withName(R.string.drawer_item_eaton9x90_pattern_header).withDescription(R.string.drawer_item_eaton9x90_pattern_subheader).withLevel(2).withIdentifier(2001).withIcon(FontAwesome.Icon.faw_archive)),
                         new PrimaryDrawerItem().withName(R.string.drawer_item_customsettings).withLevel(2).withIdentifier(2002).withSelectable(false).withIcon(FontAwesome.Icon.faw_cog)),
+                        item2,
                                 new DividerDrawerItem(),
                         new PrimaryDrawerItem().withName(R.string.drawer_item_exit).withIdentifier(3).withSelectable(false).withIcon(FontAwesome.Icon.faw_eject)
 
@@ -250,8 +289,9 @@ private void setFilters() {
 
                         if (drawerItem.getIdentifier() == 1) {
                             openFileDialog();
-                        } else if (drawerItem.getIdentifier() == 2) {
-                         //
+                        } else if (drawerItem.getIdentifier() == 5) {
+                            Intent intent = new Intent(MainActivity.this, IPAdressSettings.class);
+                            startActivity(intent);
                         } else if (drawerItem.getIdentifier() == 3) {
                             MainActivity.this.finish();
                         } else if (drawerItem.getIdentifier() == 2000) { //9130
@@ -278,7 +318,7 @@ private void setFilters() {
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                      if (position >= 0) showConsoleActivity(position);
+                if (position >= 0) showConsoleActivity(position);
             }
 
         });
@@ -294,8 +334,8 @@ private void setFilters() {
         readdevicelistUSB();
         hideProgressBar();
         BA = BluetoothAdapter.getDefaultAdapter();
-
-
+        readdevicelistWIFI();
+     //   mHandler.sendEmptyMessage(MESSAGE_REFRESH);
     }
 
 
@@ -304,7 +344,7 @@ private void setFilters() {
         super.onPause();
         unregisterReceiver(mUsbReceiver);
         unbindService(usbConnection);
-
+     //   mHandler.removeMessages(MESSAGE_REFRESH);
     }
 
 
@@ -404,6 +444,18 @@ private void openFileDialog() {
 
 
     //========================================================================
+    private  void ping() {
+
+        Intent intent = new Intent(UsbService.PING_WIFI);
+        sendBroadcast(intent);
+    }
+
+    private  void readdevicelistWIFI() {
+
+        Intent intent = new Intent(UsbService.GET_ACTION_DEVlIST_WIFI);
+        sendBroadcast(intent);
+    }
+
 
     private  void readdevicelistUSB() {
 
@@ -468,6 +520,13 @@ private void openFileDialog() {
         }
     }
 
+    public void wifibutton_click (View V) {
+        ping();
+
+
+
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -481,6 +540,15 @@ private void openFileDialog() {
             }
         }
     }
+    @Override
+    public void onBackPressed() {
+        //handle the back press :D close the drawer first and if the drawer is closed close the activity
+        if (result != null && result.isDrawerOpen()) {
+            result.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
 
+    }
 }
 

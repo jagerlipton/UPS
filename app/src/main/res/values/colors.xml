@@ -3,15 +3,20 @@
     <color name="colorPrimary">#cfe6ee</color>
     <color name="colorPrimaryDark">#263436</color>
 
+    <color name="toolbarcolor">#cfe6ee</color>
     <color name="STATUS">#f1ecec</color>
     <color name="NOTICE">#d9edef</color>
     <color name="ALARM">#fca9a3</color>
     <color name="CMD">#abcfa8</color>
     <color name="EVENT">#f4f4d8</color>
     <color name="reader_font_color">#212121</color>
+    <color name="reader_label_font_color">#212121</color>
     <color name="header_font_color">#212121</color>
     <color name="sub_header_font_color">#585656</color>
     <color name="bg_corner_selected">#b7d6d6</color>
     <color name="corner">#ffbbbbbb</color>
     <color name="bg_corner">#ffffff</color>
+
+    <color name="button_BT_fontcolor">#000000</color>
+    <color name="button_reader_fontcolor">#000000</color>
 </resources>

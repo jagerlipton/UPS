@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:id="@+id/activity_serial_console"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="go.upsseriallogger.SerialConsoleActivity">
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/toolbarcolor"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingTop="@dimen/tool_bar_top_padding"
+             />
 
        <LinearLayout style="?android:buttonBarStyle"
         android:layout_width="match_parent"
@@ -16,35 +22,41 @@
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCH"
-            android:onClick="ESCH_click" />
+            android:onClick="ESCH_click"
+            android:textColor="@color/button_reader_fontcolor"/>
 
            <Button style="?android:buttonBarButtonStyle"
             android:text="@string/button_ESCL"
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCL"
-            android:onClick="ESCL_click" />
+            android:onClick="ESCL_click"
+            android:textColor="@color/button_reader_fontcolor"/>
 
            <Button style="?android:buttonBarButtonStyle"
             android:text="@string/button_ESCB"
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCB"
-            android:onClick="ESCB_click" />
+            android:onClick="ESCB_click"
+            android:textColor="@color/button_reader_fontcolor"/>
 
            <Button style="?android:buttonBarButtonStyle"
             android:text="@string/button_ESCN"
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:id="@+id/ESCN"
-            android:onClick="ESCN_click" />
+            android:onClick="ESCN_click"
+            android:textColor="@color/button_reader_fontcolor"
+               />
 
            <Button style="?android:buttonBarButtonStyle"
             android:text="@string/button_Clear"
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:id="@+id/clearlist"
-            android:onClick="clearlist_click" />
+            android:onClick="clearlist_click"
+            android:textColor="@color/button_reader_fontcolor"/>
     </LinearLayout>
 
     <FrameLayout

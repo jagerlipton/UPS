@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">UPS Serial logger</string>
+    <string name="app_name"></string>
     <string name="pref_comport">Настройки COM порта</string>
     <string name="settings_directory_path">Настройки пути сохранения логов…</string>
     <string name="settings_comport">Настройки COM порта…</string>
@@ -12,10 +12,13 @@
     <string name="button_ESCB">ESCB</string>
     <string name="button_ESCN">ESCN</string>
     <string name="button_Clear">Clear</string>
+    <string name="button_deleteIP">Delete IP</string>
+    <string name="button_addIP">Add IP</string>
     <string name="refreshing">Scanning</string>
     <string name="button_BT">Find BT devices</string>
-
-
+    <string name="button_WIFI">Find NET devices</string>
+    <string name="text_IP">Add IP address</string>
+    <string name="drawer_item_ipadress">IP address settings…</string>
     <string name="drawer_item_openfile">Open file log…</string>
     <string name="drawer_item_serialportsettings">Serial Port settings</string>
     <string name="drawer_item_eaton">Eaton</string>
@@ -26,4 +29,6 @@
 
     <string name="drawer_item_customsettings">Custom…</string>
     <string name="drawer_item_exit">Exit</string>
+
+    <string name="incorrectIPAddress">IP address is incorrect</string>
 </resources>

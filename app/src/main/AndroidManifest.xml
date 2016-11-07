@@ -7,8 +7,10 @@
 
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-feature android:name="android.hardware.bluetooth" />
+
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:theme">
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,9 +49,9 @@
 
         <service
             android:name=".UsbService"
-            android:enabled="true">
-            </service>
+            android:enabled="true"></service>
 
-          </application>
+        <activity android:name=".IPAdressSettings"></activity>
+    </application>
 
 </manifest>

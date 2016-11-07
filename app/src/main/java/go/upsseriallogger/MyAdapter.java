@@ -54,8 +54,10 @@ public class MyAdapter extends BaseAdapter {
         header.setText(data.get(i).header);
         subHeader.setTextColor(context.getResources().getColor(R.color.sub_header_font_color));
         subHeader.setText(data.get(i).subheader);
-       if (data.get(i).btconnection) imageView.setImageResource( R.drawable.bt);
-       else imageView.setImageResource( R.drawable.usb);
+       if (data.get(i).typeconnection.equals(Item.bt_connection)) imageView.setImageResource( R.drawable.bt);
+       if (data.get(i).typeconnection.equals(Item.wifi_connection)) imageView.setImageResource( R.drawable.wifi);
+       if (data.get(i).typeconnection.equals(Item.serial_connection)) imageView.setImageResource( R.drawable.usb);
+
         return someView;
     }
 

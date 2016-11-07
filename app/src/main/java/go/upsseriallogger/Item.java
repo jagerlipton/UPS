@@ -10,14 +10,36 @@ public class Item  implements Serializable {
     Boolean btconnection;
     Integer absolute_index_fromSerialDevList;
     String mac;
+    String ip;
+    Byte typeconnection;
+
+    public final static Byte wifi_connection = 1;
+    public final static Byte bt_connection = 2;
+    public final static Byte serial_connection = 3;
 
 
-    Item(String h, String s, Boolean b, Integer index, String m){
+    Item(String h, String s,  Integer index, String m,String ip, Byte tc){
         this.header=h;
         this.subheader=s;
-        this.btconnection=b;
+       // this.btconnection=b;
         this.absolute_index_fromSerialDevList=index;
         this.mac=m;
+        this.ip=ip;
+        this.typeconnection=tc;
+    }
+
+    public String getIP() {
+        return ip;
+    }
+    public void setIP(String ip) {
+        this.ip = ip;
+    }
+
+    public Byte geTypeConnection() {
+        return typeconnection;
+    }
+    public void setTypeConnection(Byte header) {
+        this.typeconnection = header;
     }
 
     public String getHeader() {
@@ -26,6 +48,7 @@ public class Item  implements Serializable {
     public void setHeader(String header) {
         this.header = header;
     }
+
     public String getSubHeader() {return subheader;   }
     public void setSubHeader(String subHeader) {
         this.subheader = subHeader;

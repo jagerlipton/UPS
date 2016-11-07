@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -16,18 +17,23 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -54,6 +60,9 @@ public class UsbService extends Service {
     public final static String END_DISCOVERY= "go.action.upsserialcontroller_enddiscovery_servicebackbroadcast";
     public final static String STARTPORT_BT_ACTION= "go.action.upsserialcontroller_startbt.portservicebackbroadcast";
     public final static String STOPPORT_BT_ACTION= "go.action.upsserialcontroller_stopbt.portservicebackbroadcast";
+    public final static String GET_ACTION_DEVlIST_WIFI= "go.action.upsserialcontroller_getdevlistwifi.portservicebackbroadcast";
+    public final static String PING_WIFI= "go.action.upsserialcontroller_pingwifi.portservicebackbroadcast";
+    public final static String SET_DEVLIST_WIFI = "go.action.upsserialcontroller_setdevlistwifi_servicebackbroadcast";
 
     public static boolean SERVICE_CONNECTED = false;
     private static final String HEX_L = "4C";
@@ -84,14 +93,20 @@ public class UsbService extends Service {
     private String fullstring="";
     private  ArrayList<Item> devListUsb = new ArrayList<>();
     private  ArrayList<Item> devListBT = new ArrayList<>();
+    private  ArrayList<Item> devListWIFI = new ArrayList<>();
+    private  ArrayList<String>devListWIFItemp = new ArrayList<>();
+
+    public static final String NEW_LINE = System.getProperty("line.separator");
     //====================
     private final UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
         @Override
         public void onReceivedData(byte[] arg0) {
             try {
                 String data = new String(arg0, "UTF-8");
-                if (mHandler != null){
-                   if(!data.contains("\n"))fullstring=fullstring+data;
+
+                   if (mHandler != null){
+
+                    if(!data.contains(NEW_LINE))fullstring=fullstring+data;
                     else {
                     Intent intent = new Intent(ACTION_LOG_LIST);
                     intent.putExtra("data",fullstring);
@@ -179,6 +194,12 @@ public class UsbService extends Service {
                 case STOPPORT_BT_ACTION:
                    btConnectionStop();
                     break;
+                case GET_ACTION_DEVlIST_WIFI:
+                    readiplist();
+                    break;
+                case PING_WIFI:
+                    wifilist();
+                    break;
                           }
         }
     };
@@ -200,6 +221,8 @@ public class UsbService extends Service {
         filter.addAction(ACTION_DISCOVERY_FINISHED);
         filter.addAction(STARTPORT_BT_ACTION);
         filter.addAction(STOPPORT_BT_ACTION);
+        filter.addAction(GET_ACTION_DEVlIST_WIFI);
+        filter.addAction(PING_WIFI);
 
         registerReceiver(usbReceiver, filter);
 
@@ -223,22 +246,46 @@ public class UsbService extends Service {
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
                     case RECIEVE_MESSAGE:
-                        byte[] readBuf = (byte[]) msg.obj;
-                        String strIncom = new String(readBuf, 0, msg.arg1);
-                        sb.append(strIncom);
-                        int endOfLineIndex = sb.indexOf("\r\n");
-                        if (endOfLineIndex > 0) {
-                            String sbprint = sb.substring(0, endOfLineIndex);
-                            sb.delete(0, sb.length());
+                        try {
+                            byte[] readBuf = (byte[]) msg.obj;
+                            String data = new String(readBuf, "UTF-8");
+                            if (mHandler != null) {
 
-                            Intent intent = new Intent(ACTION_LOG_LIST);
-                            intent.putExtra("data",sbprint);
-                            context.sendBroadcast(intent);
-                                              }
-                                                break;
-                }
+                                if (!data.contains(NEW_LINE)) fullstring = fullstring + data;
+                                else {
+                                    Intent intent = new Intent(ACTION_LOG_LIST);
+                                    intent.putExtra("data", fullstring);
+                                    context.sendBroadcast(intent);
+                                    fullstring = "";
+                                }
+                            }
+
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+              //  byte[] readBuf = (byte[]) msg.obj;
+//                String strIncom = new String(readBuf, 0, msg.arg1);
+  //              sb.append(strIncom);
+    //            int endOfLineIndex = sb.indexOf(NEW_LINE);
+      //          if (endOfLineIndex > 0) {
+        //            String sbprint = sb.substring(0, endOfLineIndex);
+          //          sb.delete(0, sb.length());
+
+
+                //  Intent intent = new Intent(ACTION_LOG_LIST);
+                 //   intent.putExtra("data",sbprint);
+                  //  context.sendBroadcast(intent);
+             // }
+             //   break;
+            }
             }
         };
+
+
+
+
         BA = BluetoothAdapter.getDefaultAdapter();
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
     }
@@ -252,6 +299,116 @@ public class UsbService extends Service {
 
     //========================================================================
 
+    private Integer pingpong(String IP){
+        System.out.println("executeCommand");
+        Runtime runtime = Runtime.getRuntime();
+        try
+        {
+            Process  mIpAddrProcess = runtime.exec("/system/bin/ping -c 1 "+IP);
+            Integer ping =  mIpAddrProcess.waitFor();
+            Toast.makeText(context,  Integer.toString(ping), Toast.LENGTH_SHORT).show();
+             return ping;
+
+        }
+        catch (InterruptedException ignore)
+        {
+            ignore.printStackTrace();
+            System.out.println(" Exception:"+ignore);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            System.out.println(" Exception:"+e);
+        }
+        return 0;
+    }
+
+
+    public double getLatency(String ipAddress){
+        String pingCommand = "/system/bin/ping -c " + 1 + " " + ipAddress;
+        String inputLine = "";
+        double avgRtt = 0;
+
+        try {
+            Process process = Runtime.getRuntime().exec(pingCommand);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            inputLine = bufferedReader.readLine();
+            while ((inputLine != null)) {
+                if (inputLine.length() > 0 && inputLine.contains("avg")) {
+                    break;
+                }
+                inputLine = bufferedReader.readLine();
+            }
+        }
+        catch (IOException e){
+         //   Log.v(DEBUG_TAG, "getLatency: EXCEPTION");
+            e.printStackTrace();
+        }
+
+
+        String afterEqual = inputLine.substring(inputLine.indexOf("="), inputLine.length()).trim();
+        String afterFirstSlash = afterEqual.substring(afterEqual.indexOf('/') + 1, afterEqual.length()).trim();
+        String strAvgRtt = afterFirstSlash.substring(0, afterFirstSlash.indexOf('/'));
+        avgRtt = Double.valueOf(strAvgRtt);
+       // Toast.makeText(context,  Double.toString(avgRtt), Toast.LENGTH_SHORT).show();
+        return avgRtt;
+    }
+
+
+
+
+
+    private void readiplist() {
+        devListWIFItemp.clear();
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        Set<String> set = SP.getStringSet("DATE_LIST", new HashSet<String>());
+        devListWIFItemp.addAll(set);
+        }
+
+
+
+    //==============список доступных хостов
+    private void wifilist() {
+
+        if (!devListWIFItemp.isEmpty()) {
+
+            devListWIFI.clear();
+            Double pingtimeout;
+            for (int k = 0; k < devListWIFItemp.size(); ++k) {
+                pingtimeout = getLatency(devListWIFItemp.get(k));
+
+                if (pingtimeout > 0) {
+                    Item item = new Item("", "", 0, "000000", "000000", Item.wifi_connection);
+                    item.header = "Network device: (" + devListWIFItemp.get(k) + ")";
+                    item.subheader = "Ping: " + Double.toString(pingtimeout);
+                    item.mac = "0000000";
+                    item.ip = devListWIFItemp.get(k);
+                    item.typeconnection = Item.serial_connection;
+                    item.absolute_index_fromSerialDevList = 0;
+                    devListWIFI.add(item);
+
+                }
+            }
+           if (devListWIFI.size()>0){
+            Intent intent = new Intent(SET_DEVLIST_WIFI);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("wifidevlist", devListWIFI);
+            intent.putExtras(bundle);
+            sendBroadcast(intent);
+
+           }
+        }
+    }
+
+
+
+
+
+
+
+
+//==========================
 
 
 
@@ -261,7 +418,7 @@ public class UsbService extends Service {
         if (!usbDevices.isEmpty()) {
 
             devListUsb.clear();
-            Item item=new Item("","",false,0,"000000");
+            Item item=new Item("","",0,"000000","000000",Item.serial_connection);
             int i = 0;
             for (Map.Entry<String, UsbDevice> entry : usbDevices.entrySet()) {
                 device = entry.getValue();
@@ -272,7 +429,8 @@ public class UsbService extends Service {
                 item.header="Serial device: ("+ Integer.toString(deviceVID) + "/" + Integer.toString(devicePID)+")";
                 item.subheader=serialPort.adapter_name;
                 item.mac="0000000";
-                item.btconnection=false;
+                item.ip="0000000";
+                item.typeconnection=Item.serial_connection;
                 item.absolute_index_fromSerialDevList=i;
                devListUsb.add(item);
                 i += 1;
@@ -397,11 +555,12 @@ public class UsbService extends Service {
 
         if (!flag)
            {
-            Item item = new Item("", "", false, 0, "000000");
+            Item item = new Item("", "",  0, "000000","000000",Item.bt_connection);
             item.header = device.getName();
             item.subheader = device.getAddress();
             item.mac = device.getAddress();
-            item.btconnection = true;
+            item.ip="00000";
+            item.typeconnection=Item.bt_connection;
             item.absolute_index_fromSerialDevList = 0;
             devListBT.add(item);
 
