@@ -139,6 +139,9 @@ public class MainActivity extends AppCompatActivity {
         if (devListBT.size()>0)
             for (int k = 0; k < devListBT.size(); ++k) devList.add(devListBT.get(k));
 
+        if (devListWIFI.size()>0)
+            for (int k = 0; k < devListWIFI.size(); ++k) devList.add(devListWIFI.get(k));
+
         ListView list = (ListView) findViewById(R.id.deviceList);
           MyAdapter adapter = new MyAdapter(this,devList);
             list.setAdapter(adapter);
@@ -475,18 +478,25 @@ private void openFileDialog() {
 
         Item item;
         item=devList.get(position);
-        if (item.btconnection){
+        if (item.typeconnection.equals(Item.bt_connection)){
             Intent intent = new Intent(MainActivity.this, SerialConsoleActivity.class);
             startActivity(intent);
             Intent intent2 = new Intent(UsbService.STARTPORT_BT_ACTION);
             intent2.putExtra("mac",item.mac);
             sendBroadcast(intent2);
         }
-        else {
+        else if (item.typeconnection.equals(Item.serial_connection)) {
             Intent intent = new Intent(MainActivity.this, SerialConsoleActivity.class);
             startActivity(intent);
             Intent intent2 = new Intent(UsbService.STARTPORT_ACTION);
             intent2.putExtra("position",item.absolute_index_fromSerialDevList);
+            sendBroadcast(intent2);
+        }
+        else if (item.typeconnection.equals(Item.wifi_connection)) {
+            Intent intent = new Intent(MainActivity.this, SerialConsoleActivity.class);
+            startActivity(intent);
+            Intent intent2 = new Intent(UsbService.STARTPORT_WIFI_ACTION);
+            intent2.putExtra("IP",item.ip);
             sendBroadcast(intent2);
         }
     }
@@ -521,6 +531,7 @@ private void openFileDialog() {
     }
 
     public void wifibutton_click (View V) {
+        showProgressBar();
         ping();
 
 

@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +30,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,6 +67,8 @@ public class UsbService extends Service {
     public final static String GET_ACTION_DEVlIST_WIFI= "go.action.upsserialcontroller_getdevlistwifi.portservicebackbroadcast";
     public final static String PING_WIFI= "go.action.upsserialcontroller_pingwifi.portservicebackbroadcast";
     public final static String SET_DEVLIST_WIFI = "go.action.upsserialcontroller_setdevlistwifi_servicebackbroadcast";
+    public final static String STARTPORT_WIFI_ACTION= "go.action.upsserialcontroller_startwifi.portservicebackbroadcast";
+    public final static String STOPPORT_WIFI_ACTION= "go.action.upsserialcontroller_stopwifi.portservicebackbroadcast";
 
     public static boolean SERVICE_CONNECTED = false;
     private static final String HEX_L = "4C";
@@ -200,6 +206,13 @@ public class UsbService extends Service {
                 case PING_WIFI:
                     wifilist();
                     break;
+                case STARTPORT_WIFI_ACTION:
+                    startwifi(arg1.getExtras().getString("IP"));
+                    break;
+                case STOPPORT_WIFI_ACTION:
+                    //wifilist();
+                    break;
+
                           }
         }
     };
@@ -223,6 +236,9 @@ public class UsbService extends Service {
         filter.addAction(STOPPORT_BT_ACTION);
         filter.addAction(GET_ACTION_DEVlIST_WIFI);
         filter.addAction(PING_WIFI);
+        filter.addAction(STARTPORT_WIFI_ACTION);
+        filter.addAction(STOPPORT_WIFI_ACTION);
+
 
         registerReceiver(usbReceiver, filter);
 
@@ -297,7 +313,87 @@ public class UsbService extends Service {
         UsbService.SERVICE_CONNECTED = false;
     }
 
-    //========================================================================
+    //========================WIFI================================================
+    public class GetMethodDemo extends AsyncTask<String , Void ,String> {
+        String server_response;
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            URL url;
+            HttpURLConnection urlConnection = null;
+
+            try {
+                url = new URL(strings[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+                int responseCode = urlConnection.getResponseCode();
+
+                if(responseCode == HttpURLConnection.HTTP_OK){
+                    server_response = readStream(urlConnection.getInputStream());
+                  //  Log.v("CatalogClient", server_response);
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+           // Log.e("Response", "" + server_response);
+
+
+        }
+    }
+
+// Converting InputStream to String
+
+    private String readStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+                Intent intent = new Intent(ACTION_LOG_LIST);
+                intent.putExtra("data", line);
+                context.sendBroadcast(intent);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return response.toString();
+    }
+    //=========================
+
+
+
+
+    private void startwifi(String IP) {
+        new GetMethodDemo().execute("http://"+IP+"/index.html");
+
+    }
+
+
+
+
+
 
     private Integer pingpong(String IP){
         System.out.println("executeCommand");
@@ -324,38 +420,70 @@ public class UsbService extends Service {
     }
 
 
-    public double getLatency(String ipAddress){
+
+
+    private boolean executeCommand(String IP){
+        System.out.println("executeCommand");
+        Runtime runtime = Runtime.getRuntime();
+        try
+        {
+            Process  mIpAddrProcess = runtime.exec("/system/bin/ping -c 1 "+IP);
+            int mExitValue = mIpAddrProcess.waitFor();
+            System.out.println(" mExitValue "+mExitValue);
+            if(mExitValue==0){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        catch (InterruptedException ignore)
+        {
+            ignore.printStackTrace();
+            System.out.println(" Exception:"+ignore);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            System.out.println(" Exception:"+e);
+        }
+        return false;
+    }
+
+    public String getLatency(String ipAddress){
         String pingCommand = "/system/bin/ping -c " + 1 + " " + ipAddress;
         String inputLine = "";
         double avgRtt = 0;
-
+        Runtime runtime = Runtime.getRuntime();
         try {
-            Process process = Runtime.getRuntime().exec(pingCommand);
+            Process  process = runtime.exec(pingCommand);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-            inputLine = bufferedReader.readLine();
-            while ((inputLine != null)) {
-                if (inputLine.length() > 0 && inputLine.contains("avg")) {
-                    break;
-                }
-                inputLine = bufferedReader.readLine();
+            String s;
+            String res = "";
+            while ((s = bufferedReader.readLine()) != null) {
+                res += s + "\n";
             }
-        }
-        catch (IOException e){
-         //   Log.v(DEBUG_TAG, "getLatency: EXCEPTION");
+            process.destroy();
+
+            if (!res.contains("mdev")){
+             return "0";
+            } else {
+            String afterEqual = res.substring(res.indexOf("mdev"), res.length()).trim();
+            String afterFirstSlash = afterEqual.substring(afterEqual.indexOf('/') + 1, afterEqual.length()).trim();
+            String strAvgRtt = afterFirstSlash.substring(0, afterFirstSlash.indexOf('/'));
+
+
+            return "ping: "+strAvgRtt+" ms";
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return "";
 
 
-        String afterEqual = inputLine.substring(inputLine.indexOf("="), inputLine.length()).trim();
-        String afterFirstSlash = afterEqual.substring(afterEqual.indexOf('/') + 1, afterEqual.length()).trim();
-        String strAvgRtt = afterFirstSlash.substring(0, afterFirstSlash.indexOf('/'));
-        avgRtt = Double.valueOf(strAvgRtt);
        // Toast.makeText(context,  Double.toString(avgRtt), Toast.LENGTH_SHORT).show();
-        return avgRtt;
+
     }
-
-
 
 
 
@@ -374,17 +502,21 @@ public class UsbService extends Service {
         if (!devListWIFItemp.isEmpty()) {
 
             devListWIFI.clear();
-            Double pingtimeout;
+            String pingtimeout;
             for (int k = 0; k < devListWIFItemp.size(); ++k) {
-                pingtimeout = getLatency(devListWIFItemp.get(k));
+              pingtimeout = getLatency(devListWIFItemp.get(k));
+            //  if  (executeCommand(devListWIFItemp.get(k)))
 
-                if (pingtimeout > 0) {
+                if (!pingtimeout.equals("0"))
+               // if (pingtimeout > 0)
+                {
                     Item item = new Item("", "", 0, "000000", "000000", Item.wifi_connection);
                     item.header = "Network device: (" + devListWIFItemp.get(k) + ")";
-                    item.subheader = "Ping: " + Double.toString(pingtimeout);
+                  // item.subheader = "Ping: " + Double.toString(pingtimeout);
+                   item.subheader=pingtimeout;
                     item.mac = "0000000";
                     item.ip = devListWIFItemp.get(k);
-                    item.typeconnection = Item.serial_connection;
+                    item.typeconnection = Item.wifi_connection;
                     item.absolute_index_fromSerialDevList = 0;
                     devListWIFI.add(item);
 
@@ -398,6 +530,8 @@ public class UsbService extends Service {
             sendBroadcast(intent);
 
            }
+            Intent intent = new Intent(END_DISCOVERY);
+            sendBroadcast(intent);
         }
     }
 
